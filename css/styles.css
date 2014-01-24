@@ -1,0 +1,184 @@
+body {
+    margin:0;
+    padding:0;
+    font-size: 12pt;
+    font-weight: normal;
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif
+}
+
+.ui-widget { 
+    font-size: 1em; 
+}
+
+#Wrapper {
+    margin-left:auto;
+    margin-right:auto;
+    width: 720px;
+}
+
+.commonBox {
+    margin-top:20px;
+    margin-bottom:20px;
+    padding:20px;
+    border: 1px solid black;
+    width: 100%;
+}
+
+#TestTitle {
+    text-align:center;
+    font-size:2em;
+    font-weight:bold;
+}
+
+#LoadOverlay {
+    display:none;
+}
+
+#TestIntroduction {
+    text-align:center;
+    min-height:300px;
+    display: none;	
+}
+
+#TestEnd{
+    text-align:center;
+    min-height:300px;
+    display: none;	
+}
+
+#TestHeading {
+    text-align:center;
+    font-size:1.5em;
+    margin-bottom:20px;	
+    padding:5px;
+    background-color:#dddddd;
+}
+
+#TableContainer {
+    text-align:center;
+    display: none;
+}
+
+.testItem {
+    padding:8px;
+}
+
+#TestTable {
+    border-spacing:10px
+}
+
+#TestTable  td {
+    background-color: transparent;	
+}
+
+#ScaleImage {
+    padding-left:10px;
+    padding-right:10px;
+}
+
+.RateSlider {
+    width: 400px;
+    margin-left:15px;
+    margin-right:15px;
+}
+
+.activeAudioCell {
+    background-color:#E98484;
+}
+
+#ResultsBox table {
+    text-align:left;
+    margin-left:auto;
+    margin-right:auto;    
+}
+
+#ResultsBox table td {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+#TestControls{
+    display: none;
+}
+
+#PlayerControls {
+    display: none;	
+}
+
+#PlayerControls > div{
+    float:left;	
+    margin-right:40px;
+}
+
+#BtnNextTest {
+    float: right;
+}
+
+#Volume{
+    font-size: 70%;
+    text-align:center;
+    width:80px;
+}
+
+#VolumeSlider {
+    width:80px;
+    margin-top:0.2em;
+}
+
+#duration {
+    margin-top:0.5em;
+    margin-right:20px !important;
+}
+
+#duration  > span {
+    padding:0.4em;
+    border: 1px solid #bbbbbb;
+    font-family: monospace;
+    border-radius: 0.2em;	
+}
+
+#TimeLine {
+    width:250px;
+    margin-right:20px !important;
+}
+
+#TimeLine > #ProgressBar{
+    height:10px;
+    margin-bottom:10px;
+}
+
+
+#TimeLine > #ProgressBar > .ui-widget-header{
+    background: #D5E5F6;
+}
+
+.playButton{
+    font-size:80%;
+}
+
+.playButton-active{
+    font-size:80%;
+    background: #D5E5F6;
+}
+
+.stopButton{
+    font-size:80%;
+}
+
+.ui-button .ui-icon.load-indicator {
+    background-image: url(../img/ajax-loader16.gif);
+    width: 16px;
+    height: 16px;
+}
+
+.error {
+    color:red;
+}
+
+#loopAudio .ui-state-active{
+    color:red;
+}
+
+#AudioPool {
+    display:none;
+}

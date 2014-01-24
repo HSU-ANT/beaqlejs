@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Mushra</title>
+
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    
+    <!-- load the test config file -->
+        <script src="example_config_abx.js" type="text/javascript"></script>
+    <!---->
+    
+    <link type="text/css" href="css/smoothness/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
+    <link type="text/css" href="css/styles.css" rel="Stylesheet" />
+
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/jquery-ui.custom.min.js" type="text/javascript" ></script>
+    <script src="js/beaqle.js" type="text/javascript"></script>
+
+
+    <script type="text/javascript">
+    /* <![CDATA[ */
+        var testHandle;
+        window.onload=function() {
+            testHandle = new AbxTest(TestData);
+        };
+    /* ]]> */
+    </script>
+   
+</head>
+
+<body>
+
+<div id="Wrapper">
+
+    <div id="TestTitle" class="commonBox">
+        <!-- overall title at the top 
+             DO NOT EDIT! This box is automatically filled with content!
+        -->
+        Loading...
+    </div>
+    
+    <!-- is displayed during load -->
+    <div id="LoadOverlay" class="commonBox">
+        <img src="img/ajax-loader.gif"/> &nbsp;&nbsp;&nbsp; Loading...
+    </div>
+
+    <!-- introduction before the test starts -->
+    <div id="TestIntroduction" class="commonBox">
+        
+        <!-- edit here if you want to change the welcome message  and instructions -->
+
+        <div style="text-align:left">
+            Thanks for your interest in participating in the listening test. The overall test will roughly take 15 minutes. Please take the time and carefully rate every item.
+            <br />
+            <br />
+            Instructions:
+            <ul>
+                <li>Most important: use high quality studio headphones and a good soundcard!</li>
+                <li>Listen through all test files and test sets before you do any ratings to get used to the material.</li>
+                <li>Rate the quality of the test items only compared to the reference on top.</li>
+                <li>Try to rate the overall impression of a test item and don't concentrate on single aspects. </li>
+            </ul>
+        </div>
+        <br />
+        <br />
+                        
+        <!-- this button starts the first test -->
+        <button id="BtnStartTest" onclick="testHandle.startTests();">Start!</button>	
+    </div>
+
+    <!-- final text after all tests have passed -->
+    <div id="TestEnd" class="commonBox">
+
+        <!-- edit here if you want to change the thank you message -->
+        Thank you very much!
+        <br />
+        <br />
+        
+        <!-- show some informations before submitting the results -->
+        <div id="SubmitBox">
+            <p> 
+                Please submit the results to our server. If you enter a name or email adress this 
+                would make it easier to contact you if we have further questions. 
+            </p>
+            
+            Name: <input id="UserName" type="text" size="40" maxlength="40" /><br />
+            Email: <input id="UserEMail" type="text" size="40" maxlength="40" /><br />
+            <br />
+            <button id="BtnSubmitData" onclick="SubmitTestResults();">Submit</button>
+        </div>
+        
+        <!-- the test results are displayed in this box -->
+        <div id="ResultsBox">
+        </div>
+    </div>
+
+    <div id="TableContainer" class="commonBox">
+        <!-- container for the test items and sliders 
+             DO NOT EDIT! This box is automatically filled with content!
+        -->    
+
+        <!-- heading for the single test -->
+        <div id="TestHeading">
+        </div>
+    
+    </div>
+
+    <!-- controls to go to next/previous test -->
+    <div id="TestControls" class="commonBox">
+        <button id="BtnNextTest">Next Test</>
+        <button id="BtnPrevTest">Previous Test</>
+    </div>
+
+    <!-- playback control -->
+    <div id="PlayerControls" class="commonBox">
+
+        <div id="duration">
+            <span>00:00</span>
+        </div>
+        
+        <div id="TimeLine">
+            <div id="ProgressBar"></div>
+            <div id="ABRange"></div>
+        </div>
+        
+        <div>
+            <input id="ChkLoopAudio" type="checkbox" value="Loop" /><label for="BtnLoopAudio">Loop</label>				
+        </div>
+        
+        <div id="Volume">
+            Volume
+            <div id="VolumeSlider"></div>
+        </div>
+        
+        <br style="clear:both"/>
+    
+    </div>
+</div>
+
+</body>
+
+</html>

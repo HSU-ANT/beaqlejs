@@ -597,26 +597,22 @@ MushraTest.prototype.constructor = MushraTest;
 // ###################################################################
 // create random mapping to test files
 MushraTest.prototype.createFileMapping = function (TestIndx) {
-    var fileMapping = [];
-    var NumFiles = this.TestData.Testsets[TestIndx].Files.length;
-    
-    for (var i = 0; i<NumFiles+1; i++) {
-            
-        var RandFileNumber = Math.floor(Math.random()*(NumFiles+1));
-        if (RandFileNumber>NumFiles) RandFileNumber = NumFiles;
-        
-        if (isInArray(fileMapping, RandFileNumber)==true) {
-            RandFileNumber = NumFiles;
-            while (isInArray(fileMapping, RandFileNumber)==true) {
+    var NumFiles = $.map(this.TestData.Testsets[TestIndx].Files, function(n, i) { return i; }).length;
+    var fileMapping = new Array(NumFiles);    
+
+    $.each(this.TestData.Testsets[TestIndx].Files, function(index, value) { 
+
+        var RandFileNumber = Math.floor(Math.random()*(NumFiles));
+        if (RandFileNumber>NumFiles-1) RandFileNumber = NumFiles-1;
+
+        if (typeof fileMapping[RandFileNumber] !== 'undefined') {
+            RandFileNumber = NumFiles-1;
+            while (typeof fileMapping[RandFileNumber] !== 'undefined') {
                     RandFileNumber--;
             }
         }
         if (RandFileNumber<0) alert(fileMapping);
-        fileMapping.push(RandFileNumber);
-    }
-    
-    $.each(fileMapping, function(index, value) { 
-            if (value==NumFiles) fileMapping[index]='HiddenRef';
+        fileMapping[RandFileNumber] = index;
     });
     
     this.TestState.FileMappings[TestIndx] = fileMapping;
@@ -660,8 +656,6 @@ MushraTest.prototype.createTestDOM = function (TestIndx) {
             $('#TableContainer > table').remove();
         }
 
-
-  
         // create random file mapping if not yet done
         if (!this.TestState.FileMappings[TestIndx]) {
                 this.createFileMapping(TestIndx);
@@ -686,9 +680,8 @@ MushraTest.prototype.createTestDOM = function (TestIndx) {
         cell[2].innerHTML = "<button class='stopButton'>Stop</button>";  	
         cell[3] = row.insertCell(-1);
         cell[3].innerHTML = "<img id='ScaleImage' src='"+TestData.RateScalePng+"'/>";  	
-        //cell[3].innerHTML = '<object type="image/svg+xml" data="'+TestData.RateScaleSvg+'"><img src="'+TestData.RateScalePng+'" alt="Blue Square"/></object>';
         
-        this.addAudio(fileID);
+        this.addAudio(TestIndx, fileID);
             
         // add spacing
         row = tab.insertRow(-1);
@@ -710,15 +703,12 @@ MushraTest.prototype.createTestDOM = function (TestIndx) {
             cell[2].innerHTML = "<button class='stopButton'>Stop</button>";  
             cell[3] = row[i].insertCell(-1);
             var fileIDstr = "";
-            if (TestData.ShowFileIDs) {
-                if (fileID.length>1) 
-                    fileIDstr = fileID.charAt(0);
-                else
+            if (this.TestData.ShowFileIDs) {
                     fileIDstr = fileID;
             }
             cell[3].innerHTML = "<div class='RateSlider' id='slider"+fileID+"' >"+fileIDstr+"</div>";
 
-            this.addAudio(fileID);
+            this.addAudio(TestIndx, fileID);
 
         }        
 

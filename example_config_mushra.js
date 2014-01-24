@@ -6,7 +6,7 @@ var TestData = {
   "RateMinValue": 0,
   "RateMaxValue": 100,
   "RateDefaultValue":0,
-  "ShowFileIDs": false,
+  "ShowFileIDs": true,
   "LoopByDefault": true,
   "EnableABLoop": true,
   "EnableOnlineSubmission": false,
@@ -15,21 +15,25 @@ var TestData = {
   "Testsets": [
     //    
     {
-      "Name": "Test 1",
-      "Files": [
-            "Reference": "audio/Johnny_pan_amb_Bereich1.wav",
-            "1": "audio/Johnny_pan_amb_Bereich1.wav",
-            "2": "audio/Johnny_pan_amb_Bereich1.wav",
-        ]
+      "Name": "Schubert",
+      "Files": {
+            "Reference": "audio/schubert_ref.wav",
+            "1": "audio/schubert_1.wav",
+            "2": "audio/schubert_2.wav",
+            "3": "audio/schubert_3.wav",
+            "4": "audio/schubert_anch.wav",
+        }
     },
     //    
     {
-      "Name": "Test 2",
-      "Files": [
-            "Reference": "audio/Johnny_pan_amb_Bereich1.wav",
-            "1": "audio/Johnny_pan_amb_Bereich1.wav",
-            "2": "audio/Johnny_pan_amb_Bereich1.wav",
-        ]
+      "Name": "Castanets",
+       "Files": {
+            "Reference": "audio/castanets_ref.wav",
+            "1": "audio/castanets_1.wav",
+            "2": "audio/castanets_2.wav",
+            "3": "audio/castanets_3.wav",
+            "4": "audio/castanets_anch.wav",
+        }
     },
   ]
 }

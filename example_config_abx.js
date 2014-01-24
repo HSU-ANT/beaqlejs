@@ -10,18 +10,18 @@ var TestData = {
   "Testsets": [
     //    
     {
-      "Name": "Test 1",
+      "Name": "Schubert",
       "Files": {
-        "A": "audio/Johnny_pan_amb_Bereich1.wav",
-        "B": "audio/Johnny_pan_amb_Bereich1.wav",
+        "A": "audio/schubert_ref.wav",
+        "B": "audio/schubert_2.wav",
       }
     },
     //    
     {
-      "Name": "Test 2",
+      "Name": "Castanets",
       "Files": {
-        "A": "audio/Johnny_pan_amb_Bereich1.wav",
-        "B": "audio/Johnny_pan_amb_Bereich1.wav",
+        "A": "audio/castanets_ref.wav",
+        "B": "audio/castanets_2.wav",
       }
     },
   ]

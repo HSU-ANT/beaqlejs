@@ -1,5 +1,5 @@
 /*
-        mushraJS - HTML5 and JavaScript framework for listening tests
+    BeaqleJS - HTML5 and JavaScript framework for listening tests
     Copyright (C) 2011-2014  Sebastian Kraft
 
     This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+
 // ###################################################################
 // Audio pool object. Creates and manages a set of <audio> tags.
 
@@ -28,7 +29,6 @@
         this.PoolID = PoolID;
     }
 
-    
     // insert audio pool into DOM
     AudioPool.prototype.register = function() {
         $('<div id="'+this.PoolID+'"></div>').appendTo('body');
@@ -136,6 +136,7 @@
         this.LoopAudio = !this.LoopAudio;
     }
 
+
 // ###################################################################
 // some helper functions
 
@@ -151,14 +152,6 @@ function clientIsIE() {
         return ieversion;
     }
     return 0;
-}
-
-// check if value is in array
-function isInArray(arr, val) {
-    for (var i = 0; i<arr.length; i++) {
-        if (arr[i]==val) return true;
-    }
-    return false;
 }
 
 
@@ -196,7 +189,7 @@ function isInArray(arr, val) {
         }
 
 
-        // create audio pool
+        // create and configure audio pool
         this.audioPool = new AudioPool('AudioPool');
         this.audioPool.register();
         this.audioPool.onTimeUpdate = $.proxy(this.audioTimeCallback, this);
@@ -204,13 +197,13 @@ function isInArray(arr, val) {
         this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
         this.audioPool.setLooped(TestData.LoopByDefault);
 
-        // show introduction
+        // show introduction div
         $('#TestTitle').html(TestData.TestName);
         $('#TestIntroduction').show();
         
+
         // setup buttons and controls
         var handlerObject = this;
-
         $('#VolumeSlider').slider({
             min:0,
             max:100,
@@ -253,6 +246,7 @@ function isInArray(arr, val) {
         $('#BtnStartTest').button();
         $('#BtnSubmitData').button({ icons: { primary: 'ui-icon-locked' }});        
                 
+
         // install handler to warn user when test is running and he tries to leave the page
         window.onbeforeunload = function () {
             /*if (this.TestState.TestIsRunning) {
@@ -293,7 +287,7 @@ function isInArray(arr, val) {
         
         if (TestIndx<0) TestIndx=0;
 
-        // if previous test was last one, ask before loading final page and exiting test
+        // if previous test was last one, ask before loading final page and then exit test
         if (TestIndx >= this.TestData.Testsets.length) {
             if (confirm('This was the last test. Do you want to finish?')) {
             
@@ -466,78 +460,11 @@ function isInArray(arr, val) {
         this.audioPool.play(id);
     }
 
-
     // ###################################################################
     // add and load audio file with specified ID
     ListeningTest.prototype.addAudio = function (TestIndx, fileID) {
         this.TestState.AudiosInLoadQueue += 1;
         this.audioPool.addAudio(this.TestData.Testsets[TestIndx].Files[fileID], fileID)
-    }
-
-
-    // ###################################################################
-    // format test results and return them as a string
-    ListeningTest.prototype.Results2HtmlTab = function () {
-        var lbr = "<br />";
-        var resultString = "Results: "+TestData.TestName+lbr;
-        for (var i = 0; i<TestData.Testsets.length; i++) { 
-            resultString += (lbr+TestData.Testsets[i].Name+lbr);
-            var tab = document.createElement('table');    
-            var row;
-            var cell;
-            // hidden reference
-            row = tab.insertRow(-1);
-            cell = row.insertCell(-1);
-            cell.innerHTML = "Hidden Reference";
-            cell = row.insertCell(-1);
-            cell.innerHTML = TestState.Ratings[i]["HiddenRef"];        
-            
-            // other files
-            for (var k = 0; k<TestData.Testsets[i].Files.length; k++) {
-                row = tab.insertRow(-1);
-                cell = row.insertCell(-1);
-                cell.innerHTML = TestData.Testsets[i].Files[k];
-                cell = row.insertCell(-1);
-                cell.innerHTML = TestState.Ratings[i][k];
-            }
-            resultString += (tab.outerHTML);
-        }
-        
-        return resultString;
-    }
-
-    ListeningTest.prototype.Results2CSV = function () {
-        var sep = ";";
-        var lbr = "\n";
-        var resultString = $('#UserName').val() + sep;
-        for (var i = 0; i<TestData.Testsets.length; i++) { 
-                resultString +=  TestState.Ratings[i]["HiddenRef"] + sep; 
-                
-                // other files
-                for (var k = 0; k<TestData.Testsets[i].Files.length; k++) {	
-                        resultString +=  TestState.Ratings[i][k] + sep; 
-                }		
-        }
-        resultString += lbr; 
-        return resultString;
-    }
-
-    ListeningTest.prototype.Results2Text = function () {
-        var sep = ";";
-        var lbr = "\n";
-        var resultString = $('#UserName').val() + sep + $('#UserEMail').val() + lbr;
-        for (var i = 0; i<TestData.Testsets.length; i++) { 
-
-                resultString += (lbr+TestData.Testsets[i].Name+lbr);		
-                resultString +=  "Hidden Reference" + sep + TestState.Ratings[i]["HiddenRef"] + lbr; 
-                
-                // other files
-                for (var k = 0; k<TestData.Testsets[i].Files.length; k++) {			
-                        resultString +=  TestData.Testsets[i].Files[k] + sep + TestState.Ratings[i][k] + lbr; 
-                }
-        }
-        
-        return resultString;
     }
 
     // ###################################################################
@@ -578,6 +505,7 @@ function isInArray(arr, val) {
         $('#SubmitData').button('option',{ icons: { primary: 'load-indicator' }});
 
     }
+
 
 
 // ###################################################################

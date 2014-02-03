@@ -12,16 +12,16 @@ var TestData = {
     {
       "Name": "Schubert",
       "Files": {
-        "A": "audio/schubert_ref.wav",
-        "B": "audio/schubert_2.wav",
+        "A": "audio/schubert_ref.ogg",
+        "B": "audio/schubert_2.ogg",
       }
     },
     //    
     {
       "Name": "Castanets",
       "Files": {
-        "A": "audio/castanets_ref.wav",
-        "B": "audio/castanets_2.wav",
+        "A": "audio/castanets_ref.ogg",
+        "B": "audio/castanets_2.ogg",
       }
     },
   ]

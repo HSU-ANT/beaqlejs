@@ -330,7 +330,7 @@ function clientIsIE() {
         this.TestState.CurrentTest = TestIdx;
         this.TestState.TestIsRunning = 1;
             
-        $('.RateSlider').each( function() {
+        $('.rateSlider').each( function() {
             $(this).slider({
                     value: TestData.RateDefaultValue,
                     min: TestData.RateMinValue,
@@ -365,7 +365,7 @@ function clientIsIE() {
     ListeningTest.prototype.pauseAllAudios = function () {    
         this.audioPool.pause();
         $(".playButton").removeClass('playButton-active');
-        $('.RateSlider').parent().css('background-color', 'transparent');    
+        $('.rateSlider').parent().css('background-color', 'transparent');    
     }
 
     // ###################################################################
@@ -451,20 +451,22 @@ function clientIsIE() {
         
         this.audioPool.pause();
 
-        $('.RateSlider').parent().css('background-color', 'transparent');
-        $('button').removeClass('playButton-active');
+        // reset all buttons and sliders
+        $('.rateSlider').parent().css('background-color', 'transparent');
+        $('.playButton').removeClass('playButton-active');
         
-        $('#slider'+id).parent().css('background-color', '#D5E5F6');
-        $('#play'+id+'Btn').addClass('playButton-active');
+        // highlight active slider and button
+        $(".rateSlider[rel="+id+"]").parent().css('background-color', '#D5E5F6');
+        $(".playButton[rel="+id+"]").addClass('playButton-active');
         
         this.audioPool.play(id);
     }
 
     // ###################################################################
     // add and load audio file with specified ID
-    ListeningTest.prototype.addAudio = function (TestIdx, fileID) {
+    ListeningTest.prototype.addAudio = function (TestIdx, fileID, relID) {
         this.TestState.AudiosInLoadQueue += 1;
-        this.audioPool.addAudio(this.TestData.Testsets[TestIdx].Files[fileID], fileID)
+        this.audioPool.addAudio(this.TestData.Testsets[TestIdx].Files[fileID], relID)
     }
 
     // ###################################################################
@@ -530,15 +532,11 @@ MushraTest.prototype.createFileMapping = function (TestIdx) {
 
     $.each(this.TestData.Testsets[TestIdx].Files, function(index, value) { 
 
-        var RandFileNumber = Math.floor(Math.random()*(NumFiles));
-        if (RandFileNumber>NumFiles-1) RandFileNumber = NumFiles-1;
+        do {
+            var RandFileNumber = Math.floor(Math.random()*(NumFiles));
+            if (RandFileNumber>NumFiles-1) RandFileNumber = NumFiles-1;
+        } while (typeof fileMapping[RandFileNumber] !== 'undefined');
 
-        if (typeof fileMapping[RandFileNumber] !== 'undefined') {
-            RandFileNumber = NumFiles-1;
-            while (typeof fileMapping[RandFileNumber] !== 'undefined') {
-                    RandFileNumber--;
-            }
-        }
         if (RandFileNumber<0) alert(fileMapping);
         fileMapping[RandFileNumber] = index;
     });
@@ -553,7 +551,7 @@ MushraTest.prototype.readRatings = function (TestIdx) {
     if ((TestIdx in this.TestState.Ratings)==false) return false;
     
     var testObject = this;
-    $(".RateSlider").each( function() {
+    $(".rateSlider").each( function() {
         var pos = $(this).attr('id').lastIndexOf('slider');
         var fileNum = $(this).attr('id').substring(pos+6, $(this).attr('id').length);	
 
@@ -567,7 +565,7 @@ MushraTest.prototype.readRatings = function (TestIdx) {
 // save ratings to TestState object
 MushraTest.prototype.saveRatings = function (TestIdx) {
     var ratings = {};
-    $(".RateSlider").each( function() {
+    $(".rateSlider").each( function() {
         var pos = $(this).attr('id').lastIndexOf('slider');
         var fileNum = $(this).attr('id').substring(pos+6, $(this).attr('id').length);
         
@@ -609,7 +607,7 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         cell[3] = row.insertCell(-1);
         cell[3].innerHTML = "<img id='ScaleImage' src='"+TestData.RateScalePng+"'/>";  	
         
-        this.addAudio(TestIdx, fileID);
+        this.addAudio(TestIdx, fileID, fileID);
             
         // add spacing
         row = tab.insertRow(-1);
@@ -622,11 +620,16 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) { 
             
             var fileID = this.TestState.FileMappings[TestIdx][i];
+            if (fileID === "Reference")
+                relID = "HiddenRef";
+            else
+                relID = fileID;
+
             row[i]  = tab.insertRow(-1);
             cell[0] = row[i].insertCell(-1);
             cell[0].innerHTML = "<span class='testItem'>Test Item "+ (i+1)+"</span>";
             cell[1] = row[i].insertCell(-1);
-            cell[1].innerHTML =  '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">Play</button>';
+            cell[1].innerHTML =  '<button id="play'+relID+'Btn" class="playButton" rel="'+relID+'">Play</button>';
             cell[2] = row[i].insertCell(-1);
             cell[2].innerHTML = "<button class='stopButton'>Stop</button>";  
             cell[3] = row[i].insertCell(-1);
@@ -634,9 +637,9 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
             if (this.TestData.ShowFileIDs) {
                     fileIDstr = fileID;
             }
-            cell[3].innerHTML = "<div class='RateSlider' id='slider"+fileID+"' >"+fileIDstr+"</div>";
+            cell[3].innerHTML = "<div class='rateSlider' id='slider"+fileID+"' rel='"+relID+"'>"+fileIDstr+"</div>";
 
-            this.addAudio(TestIdx, fileID);
+            this.addAudio(TestIdx, fileID, relID);
 
         }        
 
@@ -690,17 +693,18 @@ AbxTest.prototype.createTestDOM = function (TestIdx) {
         row  = tab.insertRow(-1);
         cell[0] = row.insertCell(-1);
         cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">A</button>';
-        this.addAudio(TestIdx, fileID);
+        this.addAudio(TestIdx, fileID, fileID);
 
         fileID = this.TestState.FileMappings[TestIdx].X;
+        relID  = "X";
         cell[1] = row.insertCell(-1);
-        cell[1].innerHTML =  '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">X</button>';
-        this.addAudio(TestIdx, fileID);
+        cell[1].innerHTML =  '<button id="play'+relID+'Btn" class="playButton" rel="'+relID+'">X</button>';
+        this.addAudio(TestIdx, fileID, relID);
 
         fileID = "B";
         cell[2] = row.insertCell(-1);
         cell[2].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">B</button>';
-        this.addAudio(TestIdx, fileID);
+        this.addAudio(TestIdx, fileID, fileID);
 
         cell[3] = row.insertCell(-1);
         cell[3].innerHTML = "<button class='stopButton'>Stop</button>";

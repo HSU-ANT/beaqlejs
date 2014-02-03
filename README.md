@@ -6,22 +6,15 @@ Description
 
 BeaqleJS provides a framework to create browser based listening tests and is purely based on open web standards like HTML5 and Javascript. Currently it supports ABX and MUSHRA style test procedures but can be easily extended to other test schemes.
 
-
-Requirements
----------------------
-
-...
-
-Configuration
----------------------
-
-...
+To get a better impression about its functionality there are two dem test sites for ABX and MUSHRA test:
+    * http://hsu-ant.github.io/beaqlejs/demo/abx/
+    * http://hsu-ant.github.io/beaqlejs/demo/mushra/
 
 
 Contact
 ---------------------
 
-https://github.com/HSU-ANT/beaqlejs
+http://hsu-ant.github.io/beaqlejs
 
 skraft (AT) hsu-hh.de
 

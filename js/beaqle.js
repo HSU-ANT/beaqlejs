@@ -277,18 +277,18 @@ function clientIsIE() {
     }
 
     // ###################################################################    
-    // prepares display to run test with number TestIndx
-    ListeningTest.prototype.runTest = function(TestIndx) {
+    // prepares display to run test with number TestIdx
+    ListeningTest.prototype.runTest = function(TestIdx) {
 
         this.pauseAllAudios();
 
         // save ratings from last test if available
         if (this.TestState.CurrentTest>=0) this.saveRatings(this.TestState.CurrentTest);
         
-        if (TestIndx<0) TestIndx=0;
+        if (TestIdx<0) TestIdx=0;
 
         // if previous test was last one, ask before loading final page and then exit test
-        if (TestIndx >= this.TestData.Testsets.length) {
+        if (TestIdx >= this.TestData.Testsets.length) {
             if (confirm('This was the last test. Do you want to finish?')) {
             
                 $('#TableContainer').hide();
@@ -312,11 +312,11 @@ function clientIsIE() {
         }
         this.audioPool.clear();            
         
-        this.createTestDOM(TestIndx);
+        this.createTestDOM(TestIdx);
  
 
         // set current test name
-        $('#TestHeading').html(TestData.Testsets[TestIndx].Name + " (" + (TestIndx+1) + " of " + TestData.Testsets.length + ")");
+        $('#TestHeading').html(TestData.Testsets[TestIdx].Name + " (" + (TestIdx+1) + " of " + TestData.Testsets.length + ")");
         $('#TestHeading').show();
 
         // hide everything instead of load animation
@@ -327,7 +327,7 @@ function clientIsIE() {
         $('#LoadOverlay').show();
                 
         // set some state variables
-        this.TestState.CurrentTest = TestIndx;
+        this.TestState.CurrentTest = TestIdx;
         this.TestState.TestIsRunning = 1;
             
         $('.RateSlider').each( function() {
@@ -356,7 +356,7 @@ function clientIsIE() {
         });
             
         // load and apply already existing ratings
-        if (typeof this.TestState.Ratings[TestIndx] !== 'undefined') this.readRatings(TestIndx);
+        if (typeof this.TestState.Ratings[TestIdx] !== 'undefined') this.readRatings(TestIdx);
             
     }
 
@@ -370,14 +370,14 @@ function clientIsIE() {
 
     // ###################################################################
     // read ratings from TestState object
-    ListeningTest.prototype.readRatings = function (TestIndx) {
+    ListeningTest.prototype.readRatings = function (TestIdx) {
         // overwrite and implement in inherited class
         alert('Function readRatings() has not been implemented in your inherited class!');
     }
 
     // ###################################################################
     // save ratings to TestState object
-    ListeningTest.prototype.saveRatings = function (TestIndx) {
+    ListeningTest.prototype.saveRatings = function (TestIdx) {
         // overwrite and implement in inherited class
         alert('Function saveRatings() has not been implemented in your inherited class!');
     }
@@ -391,7 +391,7 @@ function clientIsIE() {
 
     // ###################################################################
     // create DOM for test display
-    ListeningTest.prototype.createTestDOM = function (TestIndx) {
+    ListeningTest.prototype.createTestDOM = function (TestIdx) {
         // overwrite and implement in inherited class
         alert('Function createTestDOM() has not been implemented in your inherited class!');
     }
@@ -462,9 +462,9 @@ function clientIsIE() {
 
     // ###################################################################
     // add and load audio file with specified ID
-    ListeningTest.prototype.addAudio = function (TestIndx, fileID) {
+    ListeningTest.prototype.addAudio = function (TestIdx, fileID) {
         this.TestState.AudiosInLoadQueue += 1;
-        this.audioPool.addAudio(this.TestData.Testsets[TestIndx].Files[fileID], fileID)
+        this.audioPool.addAudio(this.TestData.Testsets[TestIdx].Files[fileID], fileID)
     }
 
     // ###################################################################
@@ -524,11 +524,11 @@ MushraTest.prototype.constructor = MushraTest;
 
 // ###################################################################
 // create random mapping to test files
-MushraTest.prototype.createFileMapping = function (TestIndx) {
-    var NumFiles = $.map(this.TestData.Testsets[TestIndx].Files, function(n, i) { return i; }).length;
+MushraTest.prototype.createFileMapping = function (TestIdx) {
+    var NumFiles = $.map(this.TestData.Testsets[TestIdx].Files, function(n, i) { return i; }).length;
     var fileMapping = new Array(NumFiles);    
 
-    $.each(this.TestData.Testsets[TestIndx].Files, function(index, value) { 
+    $.each(this.TestData.Testsets[TestIdx].Files, function(index, value) { 
 
         var RandFileNumber = Math.floor(Math.random()*(NumFiles));
         if (RandFileNumber>NumFiles-1) RandFileNumber = NumFiles-1;
@@ -543,21 +543,21 @@ MushraTest.prototype.createFileMapping = function (TestIndx) {
         fileMapping[RandFileNumber] = index;
     });
     
-    this.TestState.FileMappings[TestIndx] = fileMapping;
+    this.TestState.FileMappings[TestIdx] = fileMapping;
 }
 
 // ###################################################################
 // read ratings from TestState object
-MushraTest.prototype.readRatings = function (TestIndx) {
+MushraTest.prototype.readRatings = function (TestIdx) {
     
-    if ((TestIndx in this.TestState.Ratings)==false) return false;
+    if ((TestIdx in this.TestState.Ratings)==false) return false;
     
     var testObject = this;
     $(".RateSlider").each( function() {
         var pos = $(this).attr('id').lastIndexOf('slider');
         var fileNum = $(this).attr('id').substring(pos+6, $(this).attr('id').length);	
 
-        $(this).slider('value', testObject.TestState.Ratings[TestIndx][fileNum]);
+        $(this).slider('value', testObject.TestState.Ratings[TestIdx][fileNum]);
         $(this).slider('refresh');
     });
 
@@ -565,7 +565,7 @@ MushraTest.prototype.readRatings = function (TestIndx) {
 
 // ###################################################################
 // save ratings to TestState object
-MushraTest.prototype.saveRatings = function (TestIndx) {
+MushraTest.prototype.saveRatings = function (TestIdx) {
     var ratings = {};
     $(".RateSlider").each( function() {
         var pos = $(this).attr('id').lastIndexOf('slider');
@@ -573,11 +573,11 @@ MushraTest.prototype.saveRatings = function (TestIndx) {
         
         ratings[fileNum] = $(this).slider( "option", "value" );
     });
-    this.TestState.Ratings[TestIndx] = ratings;
+    this.TestState.Ratings[TestIdx] = ratings;
 }
 
 
-MushraTest.prototype.createTestDOM = function (TestIndx) {
+MushraTest.prototype.createTestDOM = function (TestIdx) {
 
         // clear old test table
         if ($('#TableContainer > table')) {
@@ -585,8 +585,8 @@ MushraTest.prototype.createTestDOM = function (TestIndx) {
         }
 
         // create random file mapping if not yet done
-        if (!this.TestState.FileMappings[TestIndx]) {
-                this.createFileMapping(TestIndx);
+        if (!this.TestState.FileMappings[TestIdx]) {
+                this.createFileMapping(TestIdx);
         }
 
         // create new test table
@@ -609,7 +609,7 @@ MushraTest.prototype.createTestDOM = function (TestIndx) {
         cell[3] = row.insertCell(-1);
         cell[3].innerHTML = "<img id='ScaleImage' src='"+TestData.RateScalePng+"'/>";  	
         
-        this.addAudio(TestIndx, fileID);
+        this.addAudio(TestIdx, fileID);
             
         // add spacing
         row = tab.insertRow(-1);
@@ -619,9 +619,9 @@ MushraTest.prototype.createTestDOM = function (TestIndx) {
         var rateMax = this.TestData.RateMaxValue;
             
         // add test items
-        for (var i = 0; i < this.TestState.FileMappings[TestIndx].length; i++) { 
+        for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) { 
             
-            var fileID = this.TestState.FileMappings[TestIndx][i];
+            var fileID = this.TestState.FileMappings[TestIdx][i];
             row[i]  = tab.insertRow(-1);
             cell[0] = row[i].insertCell(-1);
             cell[0].innerHTML = "<span class='testItem'>Test Item "+ (i+1)+"</span>";
@@ -636,7 +636,7 @@ MushraTest.prototype.createTestDOM = function (TestIndx) {
             }
             cell[3].innerHTML = "<div class='RateSlider' id='slider"+fileID+"' >"+fileIDstr+"</div>";
 
-            this.addAudio(TestIndx, fileID);
+            this.addAudio(TestIdx, fileID);
 
         }        
 
@@ -658,7 +658,7 @@ AbxTest.prototype.constructor = AbxTest;
 
 
 // implement specific code
-AbxTest.prototype.createTestDOM = function (TestIndx) {
+AbxTest.prototype.createTestDOM = function (TestIdx) {
 
         // clear old test table
         if ($('#TableContainer > table')) {
@@ -675,13 +675,13 @@ AbxTest.prototype.createTestDOM = function (TestIndx) {
 
   
         // create random file mapping if not yet done
-        if (!this.TestState.FileMappings[TestIndx]) {
-           this.TestState.FileMappings[TestIndx] = {"X": ""};
+        if (!this.TestState.FileMappings[TestIdx]) {
+           this.TestState.FileMappings[TestIdx] = {"X": ""};
            var RandFileNumber = Math.random();
            if (RandFileNumber>0.5) {
-               this.TestState.FileMappings[TestIndx].X = "A";
+               this.TestState.FileMappings[TestIdx].X = "A";
             } else {
-               this.TestState.FileMappings[TestIndx].X = "B";
+               this.TestState.FileMappings[TestIdx].X = "B";
             }                
         }	
             
@@ -690,17 +690,17 @@ AbxTest.prototype.createTestDOM = function (TestIndx) {
         row  = tab.insertRow(-1);
         cell[0] = row.insertCell(-1);
         cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">A</button>';
-        this.addAudio(TestIndx, fileID);
+        this.addAudio(TestIdx, fileID);
 
-        fileID = this.TestState.FileMappings[TestIndx].X;
+        fileID = this.TestState.FileMappings[TestIdx].X;
         cell[1] = row.insertCell(-1);
         cell[1].innerHTML =  '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">X</button>';
-        this.addAudio(TestIndx, fileID);
+        this.addAudio(TestIdx, fileID);
 
         fileID = "B";
         cell[2] = row.insertCell(-1);
         cell[2].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">B</button>';
-        this.addAudio(TestIndx, fileID);
+        this.addAudio(TestIdx, fileID);
 
         cell[3] = row.insertCell(-1);
         cell[3].innerHTML = "<button class='stopButton'>Stop</button>";
@@ -726,7 +726,7 @@ AbxTest.prototype.createTestDOM = function (TestIndx) {
         $('#TableContainer').append(tab);	
 
         // randomly preselect one radio button
-        if (typeof this.TestState.Ratings[TestIndx] == 'undefined') {
+        if (typeof this.TestState.Ratings[TestIdx] == 'undefined') {
             if (Math.random() > 0.5) {
                $("#selectB").prop("checked", true);
             } else {
@@ -736,22 +736,22 @@ AbxTest.prototype.createTestDOM = function (TestIndx) {
 }
 
 
-AbxTest.prototype.readRatings = function (TestIndx) {
+AbxTest.prototype.readRatings = function (TestIdx) {
 
-    if (this.TestState.Ratings[TestIndx] === "A") {
+    if (this.TestState.Ratings[TestIdx] === "A") {
         $("#selectA").prop("checked", true);
-    } else if (this.TestState.Ratings[TestIndx] === "B") {
+    } else if (this.TestState.Ratings[TestIdx] === "B") {
         $("#selectB").prop("checked", true);
     }
 
 }
 
-AbxTest.prototype.saveRatings = function (TestIndx) {
+AbxTest.prototype.saveRatings = function (TestIdx) {
 
     if ($("#selectA").prop("checked")) {
-        this.TestState.Ratings[TestIndx] = "A";
+        this.TestState.Ratings[TestIdx] = "A";
     } else if ($("#selectB").prop("checked")) {
-        this.TestState.Ratings[TestIndx] = "B";
+        this.TestState.Ratings[TestIdx] = "B";
     }
 }
 

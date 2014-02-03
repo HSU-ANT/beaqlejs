@@ -731,11 +731,11 @@ AbxTest.prototype.createTestDOM = function (TestIdx) {
 
         // randomly preselect one radio button
         if (typeof this.TestState.Ratings[TestIdx] == 'undefined') {
-            if (Math.random() > 0.5) {
+            /*if (Math.random() > 0.5) {
                $("#selectB").prop("checked", true);
             } else {
                $("#selectA").prop("checked", true);
-            }
+            }*/
         }
 }
 

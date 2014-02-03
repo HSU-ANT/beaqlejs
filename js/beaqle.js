@@ -182,9 +182,9 @@ function clientIsIE() {
         this.TestState = {
             "CurrentTest": -1, 		// the current test index
             "TestIsRunning": 0,		// is true if test is running, false when finished or not yet started
-            "FileMappings": {},		// json array with random file mappings
-            "Ratings": {},			// json array with ratings
-            "EvalResults": {},      // json array to store the evaluated test results
+            "FileMappings": [],		// json array with random file mappings
+            "Ratings": [],			// json array with ratings
+            "EvalResults": [],      // json array to store the evaluated test results
             "AudiosInLoadQueue": -1,
         }
 
@@ -564,7 +564,7 @@ MushraTest.prototype.readRatings = function (TestIdx) {
 // ###################################################################
 // save ratings to TestState object
 MushraTest.prototype.saveRatings = function (TestIdx) {
-    var ratings = {};
+    var ratings = new Object();
     $(".rateSlider").each( function() {
         var pos = $(this).attr('id').lastIndexOf('slider');
         var fileNum = $(this).attr('id').substring(pos+6, $(this).attr('id').length);
@@ -646,6 +646,44 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         // append the created table to the DOM
         $('#TableContainer').append(tab);	
 
+}
+
+MushraTest.prototype.formatResults = function () {
+
+    var resultstring = "";
+
+
+    var numCorrect = 0;
+    var numWrong   = 0;
+
+    // evaluate single tests
+    for (var i = 0; i < this.TestData.Testsets.length; i++) {  
+
+        resultstring += "<p><b>"+this.TestData.Testsets[i].Name + "</b></p>\n";
+
+        var tab = document.createElement('table');
+        var row;
+        var cell;
+
+        row  = tab.insertRow(-1);
+        cell = row.insertCell(-1);
+        cell.innerHTML = "Filename";
+        cell = row.insertCell(-1);
+        cell.innerHTML = "Rating";
+
+        var fileArr = this.TestData.Testsets[i].Files;
+
+        $.each(this.TestState.Ratings[i], function(fileID, rating) { 
+            row  = tab.insertRow(-1);
+            cell = row.insertCell(-1);
+            cell.innerHTML = fileArr[fileID];
+            cell = row.insertCell(-1);
+            cell.innerHTML = rating;
+        });
+        resultstring += tab.outerHTML + "\n";
+    }
+   
+    return resultstring;
 }
 
 

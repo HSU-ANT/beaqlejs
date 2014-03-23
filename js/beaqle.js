@@ -171,10 +171,10 @@ function clientIsIE() {
         }
 
         // check for IE as it does not support .wav in <audio> tags
-        if (clientIsIE()) {
-            alert('Internet Explorer is not supported! Please use Firefox, Opera, Google Chrome or any other HTML5 capable browser.');
-            return;
-        }
+        // if (clientIsIE()) {
+        //    alert('Internet Explorer is not supported! Please use Firefox, Opera, Google Chrome or any other HTML5 capable browser.');
+        //    return;
+        // }
         
         this.TestData = TestData;
 

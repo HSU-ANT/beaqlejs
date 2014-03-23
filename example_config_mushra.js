@@ -6,7 +6,7 @@ var TestData = {
   "RateMinValue": 0,
   "RateMaxValue": 100,
   "RateDefaultValue":0,
-  "ShowFileIDs": true,
+  "ShowFileIDs": false,
   "LoopByDefault": true,
   "EnableABLoop": true,
   "EnableOnlineSubmission": false,

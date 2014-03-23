@@ -5,7 +5,7 @@ var TestData = {
   "ShowFileIDs": false,
   "EnableABLoop": true,
   "EnableOnlineSubmission": false,
-  "SubmitResultsURL": "",
+  "BeaqleServiceURL": "",
   "SupervisorContact": "", 
   "Testsets": [
     //    

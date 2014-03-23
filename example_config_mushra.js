@@ -10,7 +10,7 @@ var TestData = {
   "LoopByDefault": true,
   "EnableABLoop": true,
   "EnableOnlineSubmission": false,
-  "SubmitResultsURL": "",
+  "BeaqleServiceURL": "",
   "SupervisorContact": "",
   "Testsets": [
     //    

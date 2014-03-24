@@ -1,5 +1,5 @@
 // configure the test here
-var TestData = {
+var TestConfig = {
   "TestName": "Mushra Demo Test",
   "RateScalePng": "img/scale_abs.png",
   "RateScaleBgPng": "img/scale_abs_background.png",

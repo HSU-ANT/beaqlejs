@@ -1,5 +1,5 @@
 // configure the test here
-var TestData = {
+var TestConfig = {
   "TestName": "ABX Demo Test",
   "LoopByDefault": true,
   "ShowFileIDs": false,

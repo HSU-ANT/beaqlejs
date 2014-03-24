@@ -176,7 +176,7 @@ function clientIsIE() {
         //    return;
         // }
         
-        this.TestData = TestData;
+        this.TestConfig = TestData;
 
         // some state variables
         this.TestState = {
@@ -288,7 +288,7 @@ function clientIsIE() {
         if (TestIdx<0) TestIdx=0;
 
         // if previous test was last one, ask before loading final page and then exit test
-        if (TestIdx >= this.TestData.Testsets.length) {
+        if (TestIdx >= this.TestConfig.Testsets.length) {
             if (confirm('This was the last test. Do you want to finish?')) {
             
                 $('#TableContainer').hide();
@@ -300,7 +300,7 @@ function clientIsIE() {
                 
                 resultsBox.innerHTML = this.formatResults();
                                         
-            if (this.TestData.EnableOnlineSubmission) {
+            if (this.TestConfig.EnableOnlineSubmission) {
                     $("#ResultsBox").hide();
                     $("#SubmitBox").show();
                 } else {
@@ -466,7 +466,7 @@ function clientIsIE() {
     // add and load audio file with specified ID
     ListeningTest.prototype.addAudio = function (TestIdx, fileID, relID) {
         this.TestState.AudiosInLoadQueue += 1;
-        this.audioPool.addAudio(this.TestData.Testsets[TestIdx].Files[fileID], relID)
+        this.audioPool.addAudio(this.TestConfig.Testsets[TestIdx].Files[fileID], relID)
     }
 
     // ###################################################################
@@ -480,7 +480,7 @@ function clientIsIE() {
 
         $.ajax({
                     type: "POST",
-                    url: testHandle.TestData.BeaqleServiceURL,
+                    url: testHandle.TestConfig.BeaqleServiceURL,
                     data: {'testresults':EvalResultsJSON, 'username':UserName},
                     dataType: 'json'})
             .done( function (response){
@@ -494,7 +494,7 @@ function clientIsIE() {
                         $('#SubmitBox').html("span class='error'The following error occured during your submission:<br/>"
                                                 +response.message+
                                                 "<br/><br/> Please copy/paste the following table content and send it to our email adress "
-                                                +testHandle.TestData.SupervisorContact+"<br/><br/> Sorry for any inconvenience!</span><br/><br/>"); 
+                                                +testHandle.TestConfig.SupervisorContact+"<br/><br/> Sorry for any inconvenience!</span><br/><br/>"); 
                         $("#ResultsBox").show();   
                         $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-alert' }});
                     }
@@ -503,7 +503,7 @@ function clientIsIE() {
                     $('#SubmitBox').html("<span class='error'>The following error occured during your submission:<br/>"
                                             +xhr.status+
                                             "<br/><br/> Please copy/paste the following table content and send it to our email adress "
-                                            +testHandle.TestData.SupervisorContact+"<br/><br/> Sorry for any inconvenience!</span><br/><br/>");
+                                            +testHandle.TestConfig.SupervisorContact+"<br/><br/> Sorry for any inconvenience!</span><br/><br/>");
                     $("#ResultsBox").show();   
                     $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-alert' }});
                 });
@@ -530,10 +530,10 @@ MushraTest.prototype.constructor = MushraTest;
 // ###################################################################
 // create random mapping to test files
 MushraTest.prototype.createFileMapping = function (TestIdx) {
-    var NumFiles = $.map(this.TestData.Testsets[TestIdx].Files, function(n, i) { return i; }).length;
+    var NumFiles = $.map(this.TestConfig.Testsets[TestIdx].Files, function(n, i) { return i; }).length;
     var fileMapping = new Array(NumFiles);    
 
-    $.each(this.TestData.Testsets[TestIdx].Files, function(index, value) { 
+    $.each(this.TestConfig.Testsets[TestIdx].Files, function(index, value) { 
 
         do {
             var RandFileNumber = Math.floor(Math.random()*(NumFiles));
@@ -616,8 +616,8 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         row = tab.insertRow(-1);
         row.setAttribute("height","5"); 
 
-        var rateMin = this.TestData.RateMinValue;
-        var rateMax = this.TestData.RateMaxValue;
+        var rateMin = this.TestConfig.RateMinValue;
+        var rateMax = this.TestConfig.RateMaxValue;
             
         // add test items
         for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) { 
@@ -637,7 +637,7 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
             cell[2].innerHTML = "<button class='stopButton'>Stop</button>";  
             cell[3] = row[i].insertCell(-1);
             var fileIDstr = "";
-            if (this.TestData.ShowFileIDs) {
+            if (this.TestConfig.ShowFileIDs) {
                     fileIDstr = fileID;
             }
             cell[3].innerHTML = "<div class='rateSlider' id='slider"+fileID+"' rel='"+relID+"'>"+fileIDstr+"</div>";
@@ -660,9 +660,9 @@ MushraTest.prototype.formatResults = function () {
     var numWrong   = 0;
 
     // evaluate single tests
-    for (var i = 0; i < this.TestData.Testsets.length; i++) {  
+    for (var i = 0; i < this.TestConfig.Testsets.length; i++) {  
 
-        resultstring += "<p><b>"+this.TestData.Testsets[i].Name + "</b></p>\n";
+        resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b></p>\n";
 
         var tab = document.createElement('table');
         var row;
@@ -677,7 +677,7 @@ MushraTest.prototype.formatResults = function () {
         this.TestState.EvalResults[i]           = new Object();
         this.TestState.EvalResults[i].rating    = new Object();
         this.TestState.EvalResults[i].filename  = new Object();
-        var fileArr    = this.TestData.Testsets[i].Files;
+        var fileArr    = this.TestConfig.Testsets[i].Files;
         var testResult = this.TestState.EvalResults[i];
 
         $.each(this.TestState.Ratings[i], function(fileID, rating) { 
@@ -819,12 +819,12 @@ AbxTest.prototype.formatResults = function () {
     var numWrong   = 0;
 
     // evaluate single tests
-    for (var i = 0; i < this.TestData.Testsets.length; i++) {  
+    for (var i = 0; i < this.TestConfig.Testsets.length; i++) {  
 
         row  = tab.insertRow(-1);
 
         cell = row.insertCell(-1);
-        cell.innerHTML = this.TestData.Testsets[i].Name;
+        cell.innerHTML = this.TestConfig.Testsets[i].Name;
         cell = row.insertCell(-1);
 
         if (this.TestState.Ratings[i] === this.TestState.FileMappings[i].X) {
@@ -840,6 +840,6 @@ AbxTest.prototype.formatResults = function () {
 
     resultstring += tab.outerHTML;
 
-    resultstring += "<br/><p>Percentage of correct assignments: " + (numCorrect/this.TestData.Testsets.length*100).toFixed(2) + " %</p>";
+    resultstring += "<br/><p>Percentage of correct assignments: " + (numCorrect/this.TestConfig.Testsets.length*100).toFixed(2) + " %</p>";
     return resultstring;
 }

@@ -330,17 +330,18 @@ function clientIsIE() {
         this.TestState.CurrentTest = TestIdx;
         this.TestState.TestIsRunning = 1;
             
+        var mushraConf = this.TestConfig;
         $('.rateSlider').each( function() {
             $(this).slider({
-                    value: this.TestConfig.RateDefaultValue,
-                    min: this.TestConfig.RateMinValue,
-                    max: this.TestConfig.RateMaxValue,
+                    value: mushraConf.RateDefaultValue,
+                    min: mushraConf.RateMinValue,
+                    max: mushraConf.RateMaxValue,
                     animate: false,
                     orientation: "horizontal"
             });
                     
             $(this).slider('option', 'value', 0);
-            $(this).css('background-image', 'url('+this.TestConfig.RateScaleBgPng+')');
+            $(this).css('background-image', 'url('+mushraConf.RateScaleBgPng+')');
         });
 
         var handlerObject = this;

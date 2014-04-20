@@ -29,7 +29,7 @@
     /* <![CDATA[ */
         var testHandle;
         window.onload=function() {
-            testHandle = new AbxTest(TestData);
+            testHandle = new AbxTest(TestConfig);
         };
     /* ]]> */
     </script>
@@ -87,14 +87,14 @@
         <!-- show some informations before submitting the results -->
         <div id="SubmitBox">
             <p> 
-                Please submit the results to our server. If you enter a name or email adress this 
-                would make it easier to contact you if we have further questions. 
+                Please submit the results to our server. Entering a name or email address is not mandatory
+                but it would help us to contact you if we have further questions. 
             </p>
             
             Name: <input id="UserName" type="text" size="40" maxlength="40" /><br />
             Email: <input id="UserEMail" type="text" size="40" maxlength="40" /><br />
             <br />
-            <button id="BtnSubmitData" onclick="SubmitTestResults();">Submit</button>
+            <button id="BtnSubmitData" onclick="testHandle.SubmitTestResults();">Submit</button>
         </div>
         
         <!-- the test results are displayed in this box -->

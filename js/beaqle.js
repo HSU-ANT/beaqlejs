@@ -195,10 +195,10 @@ function clientIsIE() {
         this.audioPool.onTimeUpdate = $.proxy(this.audioTimeCallback, this);
         this.audioPool.onError = $.proxy(this.audioErrorCallback, this);
         this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
-        this.audioPool.setLooped(TestData.LoopByDefault);
+        this.audioPool.setLooped(this.TestConfig.LoopByDefault);
 
         // show introduction div
-        $('#TestTitle').html(TestData.TestName);
+        $('#TestTitle').html(this.TestConfig.TestName);
         $('#TestIntroduction').show();
         
 
@@ -214,7 +214,7 @@ function clientIsIE() {
             }
         });
                 
-        if (TestData.EnableABLoop==true) {
+        if (this.TestConfig.EnableABLoop==true) {
             $('#ABRange').slider({
                 range: true,
                 values: [ 0, 100],
@@ -231,7 +231,7 @@ function clientIsIE() {
         $('#PauseButton').button();
 
         //$('#ChkLoopAudio').button();
-        if (TestData.LoopByDefault) {
+        if (this.TestConfig.LoopByDefault) {
             $('#ChkLoopAudio').prop("checked", true);
         } else {
             $('#ChkLoopAudio').prop("checked", false);
@@ -316,7 +316,7 @@ function clientIsIE() {
  
 
         // set current test name
-        $('#TestHeading').html(TestData.Testsets[TestIdx].Name + " (" + (TestIdx+1) + " of " + TestData.Testsets.length + ")");
+        $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " (" + (TestIdx+1) + " of " + this.TestConfig.Testsets.length + ")");
         $('#TestHeading').show();
 
         // hide everything instead of load animation
@@ -330,17 +330,18 @@ function clientIsIE() {
         this.TestState.CurrentTest = TestIdx;
         this.TestState.TestIsRunning = 1;
             
+        var mushraConf = this.TestConfig;
         $('.rateSlider').each( function() {
             $(this).slider({
-                    value: TestData.RateDefaultValue,
-                    min: TestData.RateMinValue,
-                    max: TestData.RateMaxValue,
+                    value: mushraConf.RateDefaultValue,
+                    min: mushraConf.RateMinValue,
+                    max: mushraConf.RateMaxValue,
                     animate: false,
                     orientation: "horizontal"
             });
                     
             $(this).slider('option', 'value', 0);
-            $(this).css('background-image', 'url('+TestData.RateScaleBgPng+')');
+            $(this).css('background-image', 'url('+mushraConf.RateScaleBgPng+')');
         });
 
         var handlerObject = this;
@@ -608,7 +609,7 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         cell[2] = row.insertCell(-1);
         cell[2].innerHTML = "<button class='stopButton'>Stop</button>";  	
         cell[3] = row.insertCell(-1);
-        cell[3].innerHTML = "<img id='ScaleImage' src='"+TestData.RateScalePng+"'/>";  	
+        cell[3].innerHTML = "<img id='ScaleImage' src='"+this.TestConfig.RateScalePng+"'/>";  	
         
         this.addAudio(TestIdx, fileID, fileID);
             

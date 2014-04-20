@@ -17,22 +17,22 @@ var TestData = {
     {
       "Name": "Schubert",
       "Files": {
-            "Reference": "audio/schubert_ref.ogg",
-            "1": "audio/schubert_1.ogg",
-            "2": "audio/schubert_2.ogg",
-            "3": "audio/schubert_3.ogg",
-            "Anchor": "audio/schubert_anch.ogg",
+            "Reference": "audio/schubert_ref.wav",
+            "1": "audio/schubert_1.wav",
+            "2": "audio/schubert_2.wav",
+            "3": "audio/schubert_3.wav",
+            "4": "audio/schubert_anch.wav",
         }
     },
     //    
     {
       "Name": "Castanets",
-      "Files": {
-            "Reference": "audio/castanets_ref.ogg",
-            "1": "audio/castanets_1.ogg",
-            "2": "audio/castanets_2.ogg",
-            "3": "audio/castanets_3.ogg",
-            "Anchor": "audio/castanets_anch.ogg",
+       "Files": {
+            "Reference": "audio/castanets_ref.wav",
+            "1": "audio/castanets_1.wav",
+            "2": "audio/castanets_2.wav",
+            "3": "audio/castanets_3.wav",
+            "4": "audio/castanets_anch.wav",
         }
     },
   ]

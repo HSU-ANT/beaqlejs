@@ -248,13 +248,13 @@ function clientIsIE() {
                 
 
         // install handler to warn user when test is running and he tries to leave the page
-        window.onbeforeunload = function () {
-            /*if (this.TestState.TestIsRunning) {
-                check = ('The listening test is not yet finished!');
-                return check;
+        var testHandle = this.TestState
+        window.onbeforeunload = function (e) {
+            if (testHandle.TestIsRunning==true) {
+                return 'The listening test is not yet finished!';
             } else {
                 return;
-            }*/
+            }
         }
 
 
@@ -306,6 +306,7 @@ function clientIsIE() {
                 } else {
                     $("#ResultsBox").show();
                     $("#SubmitBox").hide();
+                    this.TestState.TestIsRunning = 0;
                 }
             }
             return;

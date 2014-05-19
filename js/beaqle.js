@@ -154,6 +154,26 @@ function clientIsIE() {
     return 0;
 }
 
+// shuffle array entries using the Fisher-Yates algorithm
+// implementation inspired by http://bost.ocks.org/mike/shuffle/
+function shuffleArray(array) {
+    var m = array.length, t, i;
+
+    // While there remain elements to shuffle…
+    while (m) {
+
+        // Pick a remaining element…
+        i = Math.floor(Math.random() * m--);
+
+        // And swap it with the current element.
+        t = array[m];
+        array[m] = array[i];
+        array[i] = t;
+    }
+
+    return array;
+}
+
 
 // ###################################################################
 // Listening test main object
@@ -260,35 +280,18 @@ function clientIsIE() {
 
     }
 
-
     // ###################################################################
     ListeningTest.prototype.nextTest = function() {
-    	this.runTest(this.TestState.CurrentTest+1);
-    }
 
-    // ###################################################################
-    ListeningTest.prototype.prevTest = function() {
-    	this.runTest(this.TestState.CurrentTest-1);
-    }
+        // save ratings from last test
+        this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest]);
 
-    // ###################################################################
-    ListeningTest.prototype.startTests = function() {
-    	this.runTest(0);
-    }
-
-    // ###################################################################    
-    // prepares display to run test with number TestIdx
-    ListeningTest.prototype.runTest = function(TestIdx) {
-
-        this.pauseAllAudios();
-
-        // save ratings from last test if available
-        if (this.TestState.CurrentTest>=0) this.saveRatings(this.TestState.CurrentTest);
-        
-        if (TestIdx<0) TestIdx=0;
-
-        // if previous test was last one, ask before loading final page and then exit test
-        if (TestIdx >= this.TestConfig.Testsets.length) {
+        // go to next test
+        if (this.TestState.CurrentTest<this.TestState.TestSequence.length-1) {
+            this.TestState.CurrentTest = this.TestState.CurrentTest+1;
+        	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
+        } else {
+            // if previous test was last one, ask before loading final page and then exit test
             if (confirm('This was the last test. Do you want to finish?')) {
             
                 $('#TableContainer').hide();
@@ -300,7 +303,7 @@ function clientIsIE() {
                 
                 resultsBox.innerHTML = this.formatResults();
                                         
-            if (this.TestConfig.EnableOnlineSubmission) {
+                if (this.TestConfig.EnableOnlineSubmission) {
                     $("#ResultsBox").hide();
                     $("#SubmitBox").show();
                 } else {
@@ -311,13 +314,57 @@ function clientIsIE() {
             }
             return;
         }
+    }
+
+    // ###################################################################
+    ListeningTest.prototype.prevTest = function() {
+        if (this.TestState.CurrentTest>0) {
+            // save ratings from last test
+            this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest]);
+            // go to previous test
+            this.TestState.CurrentTest = this.TestState.CurrentTest-1;
+        	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
+        }
+    }
+
+    // ###################################################################
+    ListeningTest.prototype.startTests = function() {
+        
+        // init linear test sequence
+        this.TestState.TestSequence = Array();
+        for (var i = 0; i < this.TestConfig.Testsets.length; i++)
+            this.TestState.TestSequence[i] = i;
+
+        // shorten and/or shuffle the sequence
+        if (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length) {
+            this.TestConfig.RandomizeTestOrder = true;
+            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
+            this.TestState.TestSequence = this.TestState.TestSequence.slice(0, this.TestConfig.MaxTestsPerRun);
+        } else if (this.TestConfig.RandomizeTestOrder == true) {
+            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
+        }
+
+        this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
+
+        // run first test
+        this.TestState.CurrentTest = 0;
+    	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
+    }
+
+    // ###################################################################    
+    // prepares display to run test with number TestIdx
+    ListeningTest.prototype.runTest = function(TestIdx) {
+
+        this.pauseAllAudios();
+
+        if ((TestIdx<0) || (TestIdx>this.TestConfig.Testsets.length)) throw new RangeError("Test index out of range!");
+
         this.audioPool.clear();            
         
         this.createTestDOM(TestIdx);
- 
 
         // set current test name
-        $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " (" + (TestIdx+1) + " of " + this.TestConfig.Testsets.length + ")");
+        $('#TestHeading').html(this.TestConfig.Testsets[TestIdx].Name + " (" + (this.TestState.CurrentTest+1) + " of " + this.TestState.TestSequence.length + ")");
         $('#TestHeading').show();
 
         // hide everything instead of load animation
@@ -328,22 +375,7 @@ function clientIsIE() {
         $('#LoadOverlay').show();
                 
         // set some state variables
-        this.TestState.CurrentTest = TestIdx;
         this.TestState.TestIsRunning = 1;
-            
-        var mushraConf = this.TestConfig;
-        $('.rateSlider').each( function() {
-            $(this).slider({
-                    value: mushraConf.RateDefaultValue,
-                    min: mushraConf.RateMinValue,
-                    max: mushraConf.RateMaxValue,
-                    animate: false,
-                    orientation: "horizontal"
-            });
-                    
-            $(this).slider('option', 'value', 0);
-            $(this).css('background-image', 'url('+mushraConf.RateScaleBgPng+')');
-        });
 
         var handlerObject = this;
         $('.stopButton').each( function() {
@@ -649,7 +681,21 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         }        
 
         // append the created table to the DOM
-        $('#TableContainer').append(tab);	
+        $('#TableContainer').append(tab);
+
+        var mushraConf = this.TestConfig;
+        $('.rateSlider').each( function() {
+            $(this).slider({
+                    value: mushraConf.RateDefaultValue,
+                    min: mushraConf.RateMinValue,
+                    max: mushraConf.RateMaxValue,
+                    animate: false,
+                    orientation: "horizontal"
+            });
+                    
+            $(this).slider('option', 'value', 0);
+            $(this).css('background-image', 'url('+mushraConf.RateScaleBgPng+')');
+        });
 
 }
 
@@ -663,37 +709,42 @@ MushraTest.prototype.formatResults = function () {
 
     // evaluate single tests
     for (var i = 0; i < this.TestConfig.Testsets.length; i++) {  
-
-        resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b></p>\n";
-
-        var tab = document.createElement('table');
-        var row;
-        var cell;
-
-        row  = tab.insertRow(-1);
-        cell = row.insertCell(-1);
-        cell.innerHTML = "Filename";
-        cell = row.insertCell(-1);
-        cell.innerHTML = "Rating";
-
         this.TestState.EvalResults[i]           = new Object();
-        this.TestState.EvalResults[i].rating    = new Object();
-        this.TestState.EvalResults[i].filename  = new Object();
-        var fileArr    = this.TestConfig.Testsets[i].Files;
-        var testResult = this.TestState.EvalResults[i];
+        this.TestState.EvalResults[i].TestID    = this.TestConfig.Testsets[i].TestID;
 
-        $.each(this.TestState.Ratings[i], function(fileID, rating) { 
+        if (this.TestState.TestSequence.indexOf(i)>=0) {
+            this.TestState.EvalResults[i].rating    = new Object();
+            this.TestState.EvalResults[i].filename  = new Object();
+
+            resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+")</p>\n";
+
+            var tab = document.createElement('table');
+            var row;
+            var cell;
+
             row  = tab.insertRow(-1);
             cell = row.insertCell(-1);
-            cell.innerHTML = fileArr[fileID];
+            cell.innerHTML = "Filename";
             cell = row.insertCell(-1);
-            cell.innerHTML = rating;
+            cell.innerHTML = "Rating";
 
-            testResult.rating[fileID]   = rating;
-            testResult.filename[fileID] = fileArr[fileID];
-        });
+            var fileArr    = this.TestConfig.Testsets[i].Files;
+            var testResult = this.TestState.EvalResults[i];
 
-        resultstring += tab.outerHTML + "\n";
+
+            $.each(this.TestState.Ratings[i], function(fileID, rating) { 
+                row  = tab.insertRow(-1);
+                cell = row.insertCell(-1);
+                cell.innerHTML = fileArr[fileID];
+                cell = row.insertCell(-1);
+                cell.innerHTML = rating;
+
+                testResult.rating[fileID]   = rating;
+                testResult.filename[fileID] = fileArr[fileID];
+            });
+            
+            resultstring += tab.outerHTML + "\n";
+        }
     }
    
     return resultstring;
@@ -822,22 +873,26 @@ AbxTest.prototype.formatResults = function () {
 
     // evaluate single tests
     for (var i = 0; i < this.TestConfig.Testsets.length; i++) {  
+        this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
 
-        row  = tab.insertRow(-1);
+        if (this.TestState.TestSequence.indexOf(i)>=0) {
+            row  = tab.insertRow(-1);
 
-        cell = row.insertCell(-1);
-        cell.innerHTML = this.TestConfig.Testsets[i].Name;
-        cell = row.insertCell(-1);
+            cell = row.insertCell(-1);
+            cell.innerHTML = this.TestConfig.Testsets[i].Name + "("+this.TestConfig.Testsets[i].TestID+")";
+            cell = row.insertCell(-1);
 
-        if (this.TestState.Ratings[i] === this.TestState.FileMappings[i].X) {
-            this.TestState.EvalResults[i] = true;
-            cell.innerHTML = "correct"; 
-            numCorrect += 1;
-        } else {
-            this.TestState.EvalResults[i] = false;
-            cell.innerHTML = "wrong"; 
-            numWrong += 1;
-        }       
+
+            if (this.TestState.Ratings[i] === this.TestState.FileMappings[i].X) {
+                this.TestState.EvalResults[i] = true;
+                cell.innerHTML = "correct"; 
+                numCorrect += 1;
+            } else {
+                this.TestState.EvalResults[i] = false;
+                cell.innerHTML = "wrong"; 
+                numWrong += 1;
+            }
+        }
     }
 
     resultstring += tab.outerHTML;

@@ -283,6 +283,10 @@ function shuffleArray(array) {
     // ###################################################################
     ListeningTest.prototype.nextTest = function() {
 
+        // stop time measurement
+        var stopTime = new Date().getTime();
+        this.TestState.Runtime[this.TestState.TestSequence[this.TestState.CurrentTest]] += stopTime - this.TestState.startTime;
+
         // save ratings from last test
         this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest]);
 
@@ -319,6 +323,9 @@ function shuffleArray(array) {
     // ###################################################################
     ListeningTest.prototype.prevTest = function() {
         if (this.TestState.CurrentTest>0) {
+            // stop time measurement
+            var stopTime = new Date().getTime();
+            this.TestState.Runtime[this.TestState.TestSequence[this.TestState.CurrentTest]] += stopTime - this.TestState.startTime;
             // save ratings from last test
             this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest]);
             // go to previous test
@@ -345,6 +352,8 @@ function shuffleArray(array) {
         }
 
         this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
+        this.TestState.Runtime = Uint32Array(this.TestConfig.Testsets.length);
+        this.TestState.startTime = 0;
 
         // run first test
         this.TestState.CurrentTest = 0;
@@ -391,6 +400,8 @@ function shuffleArray(array) {
             
         // load and apply already existing ratings
         if (typeof this.TestState.Ratings[TestIdx] !== 'undefined') this.readRatings(TestIdx);
+
+        this.TestState.startTime = new Date().getTime();
             
     }
 
@@ -711,12 +722,13 @@ MushraTest.prototype.formatResults = function () {
     for (var i = 0; i < this.TestConfig.Testsets.length; i++) {  
         this.TestState.EvalResults[i]           = new Object();
         this.TestState.EvalResults[i].TestID    = this.TestConfig.Testsets[i].TestID;
+        this.TestState.EvalResults[i].Runtime   = this.TestState.Runtime[i];
 
         if (this.TestState.TestSequence.indexOf(i)>=0) {
             this.TestState.EvalResults[i].rating    = new Object();
             this.TestState.EvalResults[i].filename  = new Object();
 
-            resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+")</p>\n";
+            resultstring += "<p><b>"+this.TestConfig.Testsets[i].Name + "</b> ("+this.TestConfig.Testsets[i].TestID+"), Runtime:" + this.TestState.Runtime[i]/1000 + "sec </p>\n";
 
             var tab = document.createElement('table');
             var row;

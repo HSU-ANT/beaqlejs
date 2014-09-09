@@ -343,7 +343,7 @@ function shuffleArray(array) {
             this.TestState.TestSequence[i] = i;
 
         // shorten and/or shuffle the sequence
-        if (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length) {
+        if ((this.TestConfig.MaxTestsPerRun > 0) && (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length)) {
             this.TestConfig.RandomizeTestOrder = true;
             this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
             this.TestState.TestSequence = this.TestState.TestSequence.slice(0, this.TestConfig.MaxTestsPerRun);

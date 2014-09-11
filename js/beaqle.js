@@ -530,6 +530,7 @@ function shuffleArray(array) {
 
         $.ajax({
                     type: "POST",
+                    timeout: 5000,
                     url: testHandle.TestConfig.BeaqleServiceURL,
                     data: {'testresults':EvalResultsJSON, 'username':UserName},
                     dataType: 'json'})
@@ -541,7 +542,7 @@ function shuffleArray(array) {
                         $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-check' }});
                         testHandle.TestState.TestIsRunning = 0;
                     } else {
-                        $('#SubmitBox').html("span class='error'The following error occured during your submission:<br/>"
+                        $('#SubmitBox').html("<span class='error'>The following error occured during your submission:<br/>"
                                                 +response.message+
                                                 "<br/><br/> Please copy/paste the following table content and send it to our email adress "
                                                 +testHandle.TestConfig.SupervisorContact+"<br/><br/> Sorry for any inconvenience!</span><br/><br/>"); 

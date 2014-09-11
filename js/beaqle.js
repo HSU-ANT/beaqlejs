@@ -283,6 +283,8 @@ function shuffleArray(array) {
     // ###################################################################
     ListeningTest.prototype.nextTest = function() {
 
+        this.pauseAllAudios();
+
         // stop time measurement
         var stopTime = new Date().getTime();
         this.TestState.Runtime[this.TestState.TestSequence[this.TestState.CurrentTest]] += stopTime - this.TestState.startTime;
@@ -322,6 +324,9 @@ function shuffleArray(array) {
 
     // ###################################################################
     ListeningTest.prototype.prevTest = function() {
+
+        this.pauseAllAudios();
+
         if (this.TestState.CurrentTest>0) {
             // stop time measurement
             var stopTime = new Date().getTime();

@@ -727,9 +727,9 @@ MushraTest.prototype.formatResults = function () {
     for (var i = 0; i < this.TestConfig.Testsets.length; i++) {  
         this.TestState.EvalResults[i]           = new Object();
         this.TestState.EvalResults[i].TestID    = this.TestConfig.Testsets[i].TestID;
-        this.TestState.EvalResults[i].Runtime   = this.TestState.Runtime[i];
 
         if (this.TestState.TestSequence.indexOf(i)>=0) {
+            this.TestState.EvalResults[i].Runtime   = this.TestState.Runtime[i];
             this.TestState.EvalResults[i].rating    = new Object();
             this.TestState.EvalResults[i].filename  = new Object();
 

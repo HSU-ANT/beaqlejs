@@ -29,7 +29,11 @@
     /* <![CDATA[ */
         var testHandle;
         window.onload=function() {
-            testHandle = new AbxTest(TestConfig);
+
+            // Uncomment one of the following lines to choose the desired test class
+
+            testHandle = new MushraTest(TestConfig);    // <-- MUSHRA test class
+            //testHandle = new AbxTest(TestConfig);     // <-- ABX test class
         };
     /* ]]> */
     </script>

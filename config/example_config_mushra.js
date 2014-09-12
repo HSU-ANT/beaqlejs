@@ -14,6 +14,7 @@ var TestConfig = {
   "SupervisorContact": "",
   "RandomizeTestOrder": false,
   "MaxTestsPerRun": 3,
+  "RequireMaxRating": true,
   "Testsets": [
     //    
     {

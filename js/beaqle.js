@@ -174,6 +174,17 @@ function shuffleArray(array) {
     return array;
 }
 
+// jQuery UI based alert() dialog replacement
+$.extend({ alert: function (message, title) {
+  $("<div></div>").dialog( {
+    buttons: { "Close": function () { $(this).dialog("close"); } },
+    close: function (event, ui) { $(this).remove(); },
+    resizable: false,
+    title: title,
+    modal: true
+  }).text(message);
+}
+});
 
 // ###################################################################
 // Listening test main object
@@ -285,12 +296,13 @@ function shuffleArray(array) {
 
         this.pauseAllAudios();
 
+        // save ratings from last test
+        if (this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest])==false)
+            return;
+
         // stop time measurement
         var stopTime = new Date().getTime();
         this.TestState.Runtime[this.TestState.TestSequence[this.TestState.CurrentTest]] += stopTime - this.TestState.startTime;
-
-        // save ratings from last test
-        this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest]);
 
         // go to next test
         if (this.TestState.CurrentTest<this.TestState.TestSequence.length-1) {
@@ -328,11 +340,13 @@ function shuffleArray(array) {
         this.pauseAllAudios();
 
         if (this.TestState.CurrentTest>0) {
+            // save ratings from last test
+            if (this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest])==false)
+                return;
+
             // stop time measurement
             var stopTime = new Date().getTime();
             this.TestState.Runtime[this.TestState.TestSequence[this.TestState.CurrentTest]] += stopTime - this.TestState.startTime;
-            // save ratings from last test
-            this.saveRatings(this.TestState.TestSequence[this.TestState.CurrentTest]);
             // go to previous test
             this.TestState.CurrentTest = this.TestState.CurrentTest-1;
         	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
@@ -625,7 +639,21 @@ MushraTest.prototype.saveRatings = function (TestIdx) {
         
         ratings[fileNum] = $(this).slider( "option", "value" );
     });
-    this.TestState.Ratings[TestIdx] = ratings;
+
+    var MaxRatingFound = false;
+    for(var prop in ratings) {
+        if(ratings[prop] === this.TestConfig.RateMaxValue) {
+            MaxRatingFound = true;
+        }
+    }
+
+    if ((MaxRatingFound == true) || (this.TestConfig.RequireMaxRating == false)) {
+        this.TestState.Ratings[TestIdx] = ratings;
+        return true;
+    } else {
+        $.alert("At least one of your ratings has to be " + this.TestConfig.RateMaxValue + " for valid results!", "Warning!")
+        return false;
+    }
 }
 
 

@@ -29,6 +29,36 @@
         this.LoopAudio = 0;
         this.ABPos = [0, 100];
         this.PoolID = PoolID;
+        this.IDPlaying = -1;
+        this.fadeOutTime = 0.02;
+        this.positionUpdateInterval = 0.01;
+
+        // web audio is only supported for same origin
+        switch(window.location.protocol) {
+           case 'http:':
+           case 'https:':
+            // check web audio support
+             try {
+               var genContextClass = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
+               this.waContext = new genContextClass();
+               this.gainNodes = new Array();
+             } catch(e) {
+               // API not supported
+               this.waContext = false;
+             }
+             break;
+           case 'file:':
+             this.waContext = false;
+             break;
+        }
+        
+        // set to false to manually disable WebAudioAPI support
+        // this.waContext = false;
+
+        // setup regular callback timer to check current playback position
+        var _this = this;
+        setInterval(this.loopCallback, this.positionUpdateInterval*1000, _this);
+
     }
 
     // insert audio pool into DOM
@@ -37,25 +67,33 @@
     }
 
     // callback for timeUpdate event
-    AudioPool.prototype.loopCallback = function(e) {
-        var progress = e.target.currentTime / e.target.duration * 100;
-                
-        if (progress > this.ABPos[1]) {
-            if (this.LoopAudio == true)
-                e.target.currentTime = this.ABPos[0] / 100 * e.target.duration;
-            else
-                e.target.pause();
+    AudioPool.prototype.loopCallback = function(_this) {
+        
+        if (_this.IDPlaying!==-1) {
+       
+            var audiotag = $('#'+_this.PoolID+' > #audio'+_this.IDPlaying).get(0);
+            
+            // calculate progress including a look ahead for fade out or loop
+            var progress = 0;
+            progress = (audiotag.currentTime+_this.positionUpdateInterval+_this.fadeOutTime) / audiotag.duration * 100;
+            
+            // if end is reached ...
+            if (progress >= _this.ABPos[1]) {
+                if (this.waContext!==false) {
+                    if (_this.LoopAudio == true) {
+                        var currID = _this.IDPlaying;
+                        setTimeout( function(){_this.play(currID)}, _this.fadeOutTime*1000 + 10);                    
+                    }
+                    _this.pause();
+                } else {
+                    if (_this.LoopAudio == true)
+                        _this.play(_this.IDPlaying);
+                    else 
+                        _this.pause();
+                }
+            }
         }
     }
-
-    // callback for audioEnd event
-    AudioPool.prototype.audioEndCallback = function(e) {
-            if (this.LoopAudio==true) {
-                e.target.currentTime = this.ABPos[0] / 100 * e.target.duration;
-                e.target.play();
-            }
-    }
-
 
     // ---------------------------------------------------------
     // overwrite these callbacks events after instantiation
@@ -88,16 +126,22 @@
         $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).attr('id', "audio"+ID);
         
         $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).off();
-
-        // internal event handlers
-        $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).on("timeupdate", $.proxy(this.loopCallback, this));
-        $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).on('ended', $.proxy(this.audioEndCallback, this));
         
         // external event handlers
         $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).on("timeupdate", this.onTimeUpdate);
         $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).on("loadeddata", this.onDataLoaded);
         $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).on("error", this.onError);
         
+        if (this.waContext!==false) {
+            var audiotag = $('#'+this.PoolID+' > #audio'+ID).get(0);
+            var gainNode = this.waContext.createGain();
+            var source = this.waContext.createMediaElementSource(audiotag);
+            source.connect(gainNode);
+            gainNode.connect(this.waContext.destination);
+            gainNode.gain.setValueAtTime(0.00001, 0);
+            this.gainNodes[ID] = gainNode;
+        }
+
         this.NumUsed++;		
     }
     
@@ -106,15 +150,37 @@
         var audiotag = $('#'+this.PoolID+' > #audio'+ID).get(0);
         
         audiotag.currentTime = this.ABPos[0] / 100 * audiotag.duration;
-                
+        
+        if (this.waContext!==false) {
+            //this.gainNodes[ID].gain.cancelScheduledValues(this.waContext.currentTime);
+            this.gainNodes[ID].gain.setValueAtTime(0.00001, this.waContext.currentTime);
+            this.gainNodes[ID].gain.exponentialRampToValueAtTime(1, this.waContext.currentTime + this.fadeOutTime);
+        }
+    
         audiotag.play();
+        this.IDPlaying = ID;
     }
     
-    // pause all audios
-    AudioPool.prototype.pause = function() {
-        var audioTags = document.body.getElementsByTagName("audio");    
-        for (var i = 0; i<audioTags.length; i++) { 
-            audioTags[i].pause();
+    // pause currentyl playing audio
+    AudioPool.prototype.pause = function() {   
+
+        if (this.IDPlaying!==-1) {
+
+            var audiotag = $('#'+this.PoolID+' > #audio'+this.IDPlaying).get(0);
+            if (this.waContext!==false) {
+                //this.gainNodes[this.IDPlaying].gain.cancelScheduledValues(this.waContext.currentTime);
+                this.gainNodes[this.IDPlaying].gain.setValueAtTime(1, this.waContext.currentTime);
+                this.gainNodes[this.IDPlaying].gain.exponentialRampToValueAtTime(0.00001, this.waContext.currentTime + this.fadeOutTime);
+        
+                var _this = this;
+                (function(atag,prevID){
+                        setTimeout( function(){if (_this.IDPlaying!==prevID) atag.pause();}, _this.fadeOutTime*1000 + 10);
+                })(audiotag,this.IDPlaying);
+                this.IDPlaying = -1;
+            } else {
+                audiotag.pause();
+            }
+
         }
     }
 

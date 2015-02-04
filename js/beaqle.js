@@ -16,6 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 
+// Enable JavaScript strict mode
+"use strict";
 
 // ###################################################################
 // Audio pool object. Creates and manages a set of <audio> tags.
@@ -317,7 +319,7 @@ $.extend({ alert: function (message, title) {
                 $('#TestControls').hide();
                 $('#TestEnd').show();
                 
-                resultsBox = document.getElementById('ResultsBox');
+                var resultsBox = document.getElementById('ResultsBox');
                 
                 resultsBox.innerHTML = this.formatResults();
                                         
@@ -371,7 +373,8 @@ $.extend({ alert: function (message, title) {
         }
 
         this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
-        this.TestState.Runtime = Uint32Array(this.TestConfig.Testsets.length);
+        this.TestState.Runtime = new Uint32Array(this.TestConfig.Testsets.length);
+//        this.TestState.Runtime.forEach(function(element, index, array){array[index] = 0});
         this.TestState.startTime = 0;
 
         // run first test
@@ -702,6 +705,7 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
         for (var i = 0; i < this.TestState.FileMappings[TestIdx].length; i++) { 
             
             var fileID = this.TestState.FileMappings[TestIdx][i];
+            var relID  = "";
             if (fileID === "Reference")
                 relID = "HiddenRef";
             else

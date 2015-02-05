@@ -52,6 +52,9 @@
              break;
         }
         
+        if (!clientIsChrome())
+            this.waContext = false;
+
         // set to false to manually disable WebAudioAPI support
         // this.waContext = false;
 
@@ -149,7 +152,7 @@
     AudioPool.prototype.play = function(ID){
         var audiotag = $('#'+this.PoolID+' > #audio'+ID).get(0);
         
-        audiotag.currentTime = this.ABPos[0] / 100 * audiotag.duration;
+        audiotag.currentTime = 0.0001 + this.ABPos[0] / 100 * audiotag.duration;
         
         if (this.waContext!==false) {
             //this.gainNodes[ID].gain.cancelScheduledValues(this.waContext.currentTime);
@@ -220,6 +223,11 @@ function clientIsIE() {
         return ieversion;
     }
     return 0;
+}
+
+// check for Google Chrome/Chromium
+function clientIsChrome() {
+    return !!window.chrome;
 }
 
 // shuffle array entries using the Fisher-Yates algorithm

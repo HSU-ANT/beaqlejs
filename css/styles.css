@@ -24,6 +24,16 @@ body {
     width: 100%;
 }
 
+#Footer {
+    color: #999999;
+    font-size: 70%;
+    margin-top: -18px;
+    margin-left: 42px;
+    margin-bottom:20px;
+    width: 100%;
+    text-align: right;
+}
+
 #TestTitle {
     text-align:center;
     font-size:2em;
@@ -169,6 +179,14 @@ body {
     background-image: url(../img/ajax-loader16.gif);
     width: 16px;
     height: 16px;
+}
+
+.feature-available {
+    color: #77bb77;
+}
+
+.feature-not-available {
+    color: #bb7777;
 }
 
 .error {

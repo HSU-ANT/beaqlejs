@@ -646,6 +646,51 @@ $.extend({ alert: function (message, title) {
     }
 
 
+    // ###################################################################
+    // Check browser capabilities
+    ListeningTest.prototype.browserFeatures = function () {
+        
+    }
+
+    // ###################################################################
+    // Get browser features formatted as a HTML string
+    ListeningTest.prototype.browserFeatureString = function () {
+        var featStr = "Available HTML5 browser features:";
+        if (this.audioPool.waContext!==false)
+            featStr += " <span class='feature-available'>WebAudioAPI</span>";
+        else
+            featStr += " <span class='feature-not-available'>WebAudioAPI</span>";
+
+        featStr += ",";
+        var a = document.createElement('audio');
+        if (!!(a.canPlayType && a.canPlayType('audio/wav; codecs="1"').replace(/no/, '')))
+            featStr += " <span class='feature-available'>WAV</span>";
+        else
+            featStr += " <span class='feature-not-available'>WAV</span>";
+
+        featStr += ",";
+        var a = document.createElement('audio');
+        if (!!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/, '')))
+            featStr += " <span class='feature-available'>Vorbis</span>";
+        else
+            featStr += " <span class='feature-not-available'>Vorbis</span>";
+
+        featStr += ",";
+        var a = document.createElement('audio');
+        if (!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, '')))
+            featStr += " <span class='feature-available'>MP3</span>";
+        else
+            featStr += " <span class='feature-not-available'>MP3</span>";
+
+        featStr += ",";
+        var a = document.createElement('audio');
+        if (!!(a.canPlayType && a.canPlayType('audio/mp4; codecs="mp4a.40.2"').replace(/no/, '')))
+            featStr += " <span class='feature-available'>AAC</span>";
+        else
+            featStr += " <span class='feature-not-available'>AAC</span>";
+
+        return featStr;
+    }
 
 // ###################################################################
 // MUSHRA test main object

@@ -29,7 +29,13 @@
     /* <![CDATA[ */
         var testHandle;
         window.onload=function() {
-            testHandle = new MushraTest(TestConfig);
+
+            // Uncomment one of the following lines to choose the desired test class
+
+            testHandle = new MushraTest(TestConfig);    // <-- MUSHRA test class
+            //testHandle = new AbxTest(TestConfig);     // <-- ABX test class
+
+            $('#Footer').prepend(testHandle.browserFeatureString() + '<br/>');
         };
     /* ]]> */
     </script>
@@ -142,6 +148,11 @@
         
         <br style="clear:both"/>
     
+    </div>
+
+    <!-- Footer -->
+    <div id="Footer">
+        This listening test has been created with <a href="https://github.com/HSU-ANT/beaqlejs" target="_blank">BeaqleJS</a>
     </div>
 </div>
 

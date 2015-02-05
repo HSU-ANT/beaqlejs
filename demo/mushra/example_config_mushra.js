@@ -12,10 +12,12 @@ var TestConfig = {
   "EnableOnlineSubmission": false,
   "BeaqleServiceURL": "",
   "SupervisorContact": "",
+  "RequireMaxRating": false,
   "Testsets": [
     //    
     {
       "Name": "Schubert",
+      "TestID": "id1",
       "Files": {
             "Reference": "audio/schubert_ref.wav",
             "1": "audio/schubert_1.wav",
@@ -27,7 +29,8 @@ var TestConfig = {
     //    
     {
       "Name": "Castanets",
-       "Files": {
+      "TestID": "id2",
+      "Files": {
             "Reference": "audio/castanets_ref.wav",
             "1": "audio/castanets_1.wav",
             "2": "audio/castanets_2.wav",

@@ -114,29 +114,24 @@
 
     // clear all files
     AudioPool.prototype.clear = function(){
-        this.NumUsed = 0;
+        if (this.waContext!==false) {
+            this.gainNodes = new Array();
+            // maybe we also have to remove the connections?!
+        }
+        $('#'+this.PoolID+' >.audiotags').remove();
     }
     
     // add new file to pool
     AudioPool.prototype.addAudio = function(path, ID){
     
-        if (this.NumPlayers<=this.NumUsed) {
-            $('<audio id="" src="" preload="auto" class="audiotags"></audio>').appendTo('#'+this.PoolID); 
-            this.NumPlayers++;
-        }
+        var audiotag = document.createElement("audio");
 
-        $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).attr('src', path);
-        $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).attr('id', "audio"+ID);
-        
-        $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).off();
-        
-        // external event handlers
-        $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).on("timeupdate", this.onTimeUpdate);
-        $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).on("loadeddata", this.onDataLoaded);
-        $('#'+this.PoolID+' > .audiotags').eq(this.NumUsed).on("error", this.onError);
-        
+        audiotag.setAttribute('src', path);
+        audiotag.setAttribute('preload', 'auto');
+        audiotag.setAttribute('class', 'audiotags');
+        audiotag.setAttribute('id', "audio"+ID)
+
         if (this.waContext!==false) {
-            var audiotag = $('#'+this.PoolID+' > #audio'+ID).get(0);
             var gainNode = this.waContext.createGain();
             var source = this.waContext.createMediaElementSource(audiotag);
             source.connect(gainNode);
@@ -144,8 +139,15 @@
             gainNode.gain.setValueAtTime(0.00001, 0);
             this.gainNodes[ID] = gainNode;
         }
+        
+        $(audiotag).off();
+        
+        // external event handlers
+        $(audiotag).on("timeupdate", this.onTimeUpdate);
+        $(audiotag).on("loadeddata", this.onDataLoaded);
+        $(audiotag).on("error", this.onError);
 
-        this.NumUsed++;		
+        $('#'+this.PoolID).append(audiotag);
     }
     
     // play audio with specified ID

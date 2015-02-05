@@ -18,7 +18,7 @@ var TestConfig = {
   "Testsets": [
     //    
     {
-      "Name": "Schubert",
+      "Name": "Schubert 1",
       "TestID": "id1_1",
       "Files": {
             "Reference": "audio/schubert_ref.wav",
@@ -29,7 +29,7 @@ var TestConfig = {
         }
     },
     {
-      "Name": "Schubert",
+      "Name": "Schubert 2",
       "TestID": "id1_2",
       "Files": {
             "Reference": "audio/schubert_ref.wav",
@@ -40,7 +40,7 @@ var TestConfig = {
         }
     },
     {
-      "Name": "Schubert",
+      "Name": "Schubert 3",
       "TestID": "id1_3",
       "Files": {
             "Reference": "audio/schubert_ref.wav",

@@ -959,7 +959,7 @@ AbxTest.prototype.createTestDOM = function (TestIdx) {
         this.addAudio(TestIdx, fileID, fileID);
 
         fileID = this.TestState.FileMappings[TestIdx].X;
-        relID  = "X";
+        var relID  = "X";
         cell[1] = row.insertCell(-1);
         cell[1].innerHTML =  '<button id="play'+relID+'Btn" class="playButton" rel="'+relID+'">X</button>';
         this.addAudio(TestIdx, fileID, relID);
@@ -1033,7 +1033,8 @@ AbxTest.prototype.formatResults = function () {
     var numWrong   = 0;
 
     // evaluate single tests
-    for (var i = 0; i < this.TestConfig.Testsets.length; i++) {  
+    for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
+        this.TestState.EvalResults[i]        = new Object();
         this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
 
         if (this.TestState.TestSequence.indexOf(i)>=0) {

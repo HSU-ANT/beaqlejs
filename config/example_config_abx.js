@@ -11,6 +11,7 @@ var TestConfig = {
     //    
     {
       "Name": "Schubert",
+      "TestID": "id1",
       "Files": {
         "A": "audio/schubert_ref.wav",
         "B": "audio/schubert_2.wav",
@@ -19,6 +20,7 @@ var TestConfig = {
     //    
     {
       "Name": "Castanets",
+      "TestID": "id2",
       "Files": {
         "A": "audio/castanets_ref.wav",
         "B": "audio/castanets_2.wav",

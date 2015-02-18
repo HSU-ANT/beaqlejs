@@ -11,6 +11,8 @@
     $results_prefix = "./results/";
     // <---
 
+    header("Cache-Control: no-cache, must-revalidate");
+
     // check if data was received by a POST request
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // allow cross domain requests

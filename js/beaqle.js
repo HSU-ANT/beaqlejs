@@ -617,6 +617,8 @@ $.extend({ alert: function (message, title) {
     ListeningTest.prototype.SubmitTestResults = function () {
             
         var UserName = $('#UserName').val();
+        var UserEMail = $('#UserEMail').val();
+        var UserComment = $('#UserComment').val();
         
         var testHandle = this;
         var EvalResultsJSON = JSON.stringify(testHandle.TestState.EvalResults);
@@ -625,7 +627,7 @@ $.extend({ alert: function (message, title) {
                     type: "POST",
                     timeout: 5000,
                     url: testHandle.TestConfig.BeaqleServiceURL,
-                    data: {'testresults':EvalResultsJSON, 'username':UserName},
+                    data: {'testresults':EvalResultsJSON, 'username':UserName, 'useremail':UserEMail, 'usercomment':UserComment},
                     dataType: 'json'})
             .done( function (response){
                     if (response.error==false) {

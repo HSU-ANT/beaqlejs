@@ -34,14 +34,31 @@
 	        while (file_exists($results_prefix.$filename."$filenumber".".txt")) {
 	            $filenumber++;
             }
-        	$filename = $filename."$filenumber".".txt";
+        	$filename_data = $filename."$filenumber".".txt";
         	
 	        // write the file
-	        $err1 = file_put_contents($results_prefix.$filename, print_r($testresults, TRUE));
+	        $err1 = file_put_contents($results_prefix.$filename_data, print_r($testresults, TRUE));
+
+            // get comment and email if available
+            if (isset($_POST['useremail']) || isset($_POST['usercomment'])) {
+                if (isset($_POST['useremail'])) {
+                    $useremail = $_POST['useremail'];
+                } else {
+                    $useremail = "";
+                }
+                if (isset($_POST['usercomment'])) {
+                    $usercomment = $_POST['usercomment'];
+                } else {
+                    $usercomment = "";
+                }
+                $filename_comment = $filename."$filenumber"."_comment.txt";
+                $comment_str = $username." : ".$useremail."\n\n".$usercomment;
+                file_put_contents($results_prefix.$filename_comment, $comment_str);
+            }
 	
 	        if ($err1===false) {
                 $return['error'] = true;
-                $return['message'] = "Error writing data to file! (".$results_prefix.$filename.")";    
+                $return['message'] = "Error writing data to file! (".$results_prefix.$filename_data.")";    
 	        } else {
                 $return['error'] = false;
                 $return['message'] = "Data is saved!";    

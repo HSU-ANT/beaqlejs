@@ -11,63 +11,67 @@
     $results_prefix = "./results/";
     // <---
 
-    header("Cache-Control: no-cache, must-revalidate");
+    // bypass any (proxy) caching
+    header("Cache-Control: no-cache, must-revalidate");    
 
     // check if data was received by a POST request
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // allow cross domain requests
+
+        // allow requests from any domain
         header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: POST, GET");
+        header("Access-Control-Allow-Methods: POST");
         header('Content-type: application/json');
+
         // check if necessary data is available
         if (isset($_POST['testresults'])) {
         
-	        $testresults = $_POST['testresults'];
-	        
+            $testresults = $_POST['testresults'];
+            
             // generate filename
-            if (isset($_POST['username'])) {
+            if (isset($_POST['username']) && (strlen($_POST['username'])<128)) {
                 $username = $_POST['username'];
             } else {
                 $username = "";
             }
        	    $filename = date("Ymd-Hi")."_".$username;
-	        $filenumber = 0;
-	
-	        while (file_exists($results_prefix.$filename."$filenumber".".txt")) {
-	            $filenumber++;
+
+            // add a random suffix 
+  	        $filenumber = mt_rand();
+            while (file_exists($results_prefix.$filename."_".dechex($filenumber).".txt")) {
+                $filenumber++;
             }
-        	$filename_data = $filename."$filenumber".".txt";
+        	$filename_data = $filename."_".dechex($filenumber).".txt";
         	
-	        // write the file
-	        $err1 = file_put_contents($results_prefix.$filename_data, print_r($testresults, TRUE));
+            // write the file
+            $succ = file_put_contents($results_prefix.$filename_data, print_r($testresults, TRUE));
 
             // get comment and email if available
-            if (isset($_POST['useremail']) || isset($_POST['usercomment'])) {
-                if (isset($_POST['useremail'])) {
-                    $useremail = $_POST['useremail'];
-                } else {
-                    $useremail = "";
-                }
-                if (isset($_POST['usercomment'])) {
-                    $usercomment = $_POST['usercomment'];
-                } else {
-                    $usercomment = "";
-                }
-                $filename_comment = $filename."$filenumber"."_comment.txt";
+            if (isset($_POST['useremail']) && (strlen($_POST['useremail'])<256)) {
+                $useremail = $_POST['useremail'];
+            } else {
+                $useremail = "";
+            }
+            if (isset($_POST['usercomment']) && (strlen($_POST['usercomment'])<2048)) {
+                $usercomment = $_POST['usercomment'];
+            } else {
+                $usercomment = "";
+            }
+            if (!empty($useremail) || !empty($usercomment)) {
+                $filename_comment = $filename."_".dechex($filenumber)."_comment.txt";
                 $comment_str = $username." : ".$useremail."\n\n".$usercomment;
                 file_put_contents($results_prefix.$filename_comment, $comment_str);
             }
-	
-	        if ($err1===false) {
+
+            if ($succ===false) {
                 $return['error'] = true;
                 $return['message'] = "Error writing data to file! (".$results_prefix.$filename_data.")";    
-	        } else {
+            } else {
                 $return['error'] = false;
                 $return['message'] = "Data is saved!";    
-	        }
+            }
         } else {
             $return['error'] = true;
-            $return['message'] = "Invalid data sent!";    
+            $return['message'] = "Invalid data sent!";
         }
         
         // return 

@@ -118,6 +118,13 @@
             this.gainNodes = new Array();
             // maybe we also have to remove the connections?!
         }
+
+        if (clientIsChrome()) {
+            //fixes bug in chromium. Otherwise old connections are not freed and maximum number of connections is reached soon
+            //https://code.google.com/p/chromium/issues/detail?id=234779
+            $('#'+this.PoolID+' >.audiotags').prop('src', false);
+        }
+
         $('#'+this.PoolID+' >.audiotags').remove();
     }
     
@@ -127,7 +134,6 @@
         var audiotag = document.createElement("audio");
 
         audiotag.setAttribute('src', path);
-        audiotag.setAttribute('preload', 'auto');
         audiotag.setAttribute('class', 'audiotags');
         audiotag.setAttribute('id', "audio"+ID)
 
@@ -148,6 +154,15 @@
         $(audiotag).on("error", this.onError);
 
         $('#'+this.PoolID).append(audiotag);
+
+        if (!clientIsChrome()) {
+            audiotag.setAttribute('preload', 'auto');
+        } else {
+            //preload=none fixes bug in chromium. Otherwise old connections are not freed and maximum number of connections is reached soon
+            //https://code.google.com/p/chromium/issues/detail?id=234779
+            audiotag.setAttribute('preload', 'none');
+            audiotag.load();
+        }
     }
     
     // play audio with specified ID
@@ -467,7 +482,8 @@ $.extend({ alert: function (message, title) {
 
         if ((TestIdx<0) || (TestIdx>this.TestConfig.Testsets.length)) throw new RangeError("Test index out of range!");
 
-        this.audioPool.clear();            
+        this.audioPool.clear();
+        this.TestState.AudiosInLoadQueue = 0;
         this.TestState.AudioLoadError = false;
 
         this.createTestDOM(TestIdx);

@@ -295,6 +295,7 @@ $.extend({ alert: function (message, title) {
             "Ratings": [],			// json array with ratings
             "EvalResults": [],      // json array to store the evaluated test results
             "AudiosInLoadQueue": -1,
+            "AudioLoadError": false
         }
 
 
@@ -467,7 +468,8 @@ $.extend({ alert: function (message, title) {
         if ((TestIdx<0) || (TestIdx>this.TestConfig.Testsets.length)) throw new RangeError("Test index out of range!");
 
         this.audioPool.clear();            
-        
+        this.TestState.AudioLoadError = false;
+
         this.createTestDOM(TestIdx);
 
         // set current test name
@@ -544,8 +546,8 @@ $.extend({ alert: function (message, title) {
     ListeningTest.prototype.audioLoadedCallback = function () {
         this.TestState.AudiosInLoadQueue--;
         
-        // if all files are loaded show test
-        if (this.TestState.AudiosInLoadQueue==0) {
+        // show test if all files finished loading and no errors occured
+        if ((this.TestState.AudiosInLoadQueue==0) && (this.TestState.AudioLoadError==false)) {
             $('#TestControls').show();
             $('#TableContainer').show();
             $('#PlayerControls').show();       
@@ -557,10 +559,26 @@ $.extend({ alert: function (message, title) {
     // audio loading error callback
     ListeningTest.prototype.audioErrorCallback = function(e) {
 
-        var s = parseInt(e.target.currentTime % 60);
+        this.TestState.AudioLoadError = true;
 
-        var errorTxt = "<p>ERROR loading audio file "+ e.target.src+"</p>";
-        
+        var errorTxt = "<p>ERROR ";
+
+        switch (e.target.error.code) {
+         case e.target.error.MEDIA_ERR_NETWORK:
+           errorTxt +=  "Network problem, ";
+           break;
+         case e.target.error.MEDIA_ERR_DECODE:
+           errorTxt +=  "File corrupted or unsupported format, ";
+           break;
+         case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+           errorTxt +=  "Wrong URL or unsupported file format, ";
+           break;
+         default:
+           errorTxt +=  "Unknown error, ";
+           break;
+        }
+        errorTxt +=  e.target.src + "</p>";
+
         $('#LoadOverlay').append(errorTxt);
     }
 

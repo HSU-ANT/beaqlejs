@@ -1,9 +1,9 @@
 import json
-import numpy as np
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import os
-from scipy.fftpack.tests.test_real_transforms import _TestIDCTBase
+import csv
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 ResultsExt    = ".txt"
 ResultsFolder = "results/"
@@ -56,16 +56,21 @@ for ResJSONData in ResJSONList:
                     RatingsDict[testID][testItem] = list()
                 RatingsDict[testID][testItem].append(ResJSONData[i]['rating'][testItem])
 
-# plot and evaluate every single test set
+# plot and evaluate every single test set, output results to a csv file
 plotsX = np.ceil(np.sqrt(numTests))
 plotsY = np.ceil(numTests / plotsX)
 plotInd = 0
 for testID in sorted(RatingsDict):
 
+    # write test set results to a csv file
+    CsvFile = open(testID+'.csv', 'w')
+    CsvWriter = csv.writer(CsvFile)
+
     testResArr = None
     labels = list()
     for testDataKey in sorted(RatingsDict[testID]):
         testData = RatingsDict[testID][testDataKey]
+        CsvWriter.writerow(list(testDataKey) + testData)
         npTestData = np.array(testData)
         labels.append(testDataKey)
         if testResArr == None:

@@ -22,9 +22,13 @@ else:
 # Import and decode all result files
 ResJSONList = list()
 for ResFileName in dirListing:
-    ResFile = open(os.path.join(ResultsFolder,ResFileName))
-    ResJSONList.append(json.load(ResFile))
-    ResFile.close()
+    ResFile = open(os.path.join(ResultsFolder, ResFileName))
+    try:
+        ResJSONList.append(json.load(ResFile))
+    except:
+        print(os.path.join(ResultsFolder, ResFileName)+" is not a valid JSON file.")
+    finally:
+        ResFile.close()
 
 # Group results by test sets
 numResults = len(ResJSONList)

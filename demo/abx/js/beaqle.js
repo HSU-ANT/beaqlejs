@@ -118,6 +118,13 @@
             this.gainNodes = new Array();
             // maybe we also have to remove the connections?!
         }
+
+        if (clientIsChrome()) {
+            //fixes bug in chromium. Otherwise old connections are not freed and maximum number of connections is reached soon
+            //https://code.google.com/p/chromium/issues/detail?id=234779
+            $('#'+this.PoolID+' >.audiotags').prop('src', false);
+        }
+
         $('#'+this.PoolID+' >.audiotags').remove();
     }
     
@@ -127,7 +134,6 @@
         var audiotag = document.createElement("audio");
 
         audiotag.setAttribute('src', path);
-        audiotag.setAttribute('preload', 'auto');
         audiotag.setAttribute('class', 'audiotags');
         audiotag.setAttribute('id', "audio"+ID)
 
@@ -148,6 +154,15 @@
         $(audiotag).on("error", this.onError);
 
         $('#'+this.PoolID).append(audiotag);
+
+        if (!clientIsChrome()) {
+            audiotag.setAttribute('preload', 'auto');
+        } else {
+            //preload=none fixes bug in chromium. Otherwise old connections are not freed and maximum number of connections is reached soon
+            //https://code.google.com/p/chromium/issues/detail?id=234779
+            audiotag.setAttribute('preload', 'none');
+            audiotag.load();
+        }
     }
     
     // play audio with specified ID
@@ -295,6 +310,7 @@ $.extend({ alert: function (message, title) {
             "Ratings": [],			// json array with ratings
             "EvalResults": [],      // json array to store the evaluated test results
             "AudiosInLoadQueue": -1,
+            "AudioLoadError": false
         }
 
 
@@ -466,8 +482,10 @@ $.extend({ alert: function (message, title) {
 
         if ((TestIdx<0) || (TestIdx>this.TestConfig.Testsets.length)) throw new RangeError("Test index out of range!");
 
-        this.audioPool.clear();            
-        
+        this.audioPool.clear();
+        this.TestState.AudiosInLoadQueue = 0;
+        this.TestState.AudioLoadError = false;
+
         this.createTestDOM(TestIdx);
 
         // set current test name
@@ -544,8 +562,8 @@ $.extend({ alert: function (message, title) {
     ListeningTest.prototype.audioLoadedCallback = function () {
         this.TestState.AudiosInLoadQueue--;
         
-        // if all files are loaded show test
-        if (this.TestState.AudiosInLoadQueue==0) {
+        // show test if all files finished loading and no errors occured
+        if ((this.TestState.AudiosInLoadQueue==0) && (this.TestState.AudioLoadError==false)) {
             $('#TestControls').show();
             $('#TableContainer').show();
             $('#PlayerControls').show();       
@@ -557,10 +575,26 @@ $.extend({ alert: function (message, title) {
     // audio loading error callback
     ListeningTest.prototype.audioErrorCallback = function(e) {
 
-        var s = parseInt(e.target.currentTime % 60);
+        this.TestState.AudioLoadError = true;
 
-        var errorTxt = "<p>ERROR loading audio file "+ e.target.src+"</p>";
-        
+        var errorTxt = "<p>ERROR ";
+
+        switch (e.target.error.code) {
+         case e.target.error.MEDIA_ERR_NETWORK:
+           errorTxt +=  "Network problem, ";
+           break;
+         case e.target.error.MEDIA_ERR_DECODE:
+           errorTxt +=  "File corrupted or unsupported format, ";
+           break;
+         case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+           errorTxt +=  "Wrong URL or unsupported file format, ";
+           break;
+         default:
+           errorTxt +=  "Unknown error, ";
+           break;
+        }
+        errorTxt +=  e.target.src + "</p>";
+
         $('#LoadOverlay').append(errorTxt);
     }
 
@@ -617,6 +651,8 @@ $.extend({ alert: function (message, title) {
     ListeningTest.prototype.SubmitTestResults = function () {
             
         var UserName = $('#UserName').val();
+        var UserEMail = $('#UserEMail').val();
+        var UserComment = $('#UserComment').val();
         
         var testHandle = this;
         var EvalResultsJSON = JSON.stringify(testHandle.TestState.EvalResults);
@@ -625,7 +661,7 @@ $.extend({ alert: function (message, title) {
                     type: "POST",
                     timeout: 5000,
                     url: testHandle.TestConfig.BeaqleServiceURL,
-                    data: {'testresults':EvalResultsJSON, 'username':UserName},
+                    data: {'testresults':EvalResultsJSON, 'username':UserName, 'useremail':UserEMail, 'usercomment':UserComment},
                     dataType: 'json'})
             .done( function (response){
                     if (response.error==false) {

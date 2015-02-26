@@ -322,6 +322,8 @@ $.extend({ alert: function (message, title) {
         this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
         this.audioPool.setLooped(this.TestConfig.LoopByDefault);
 
+        this.checkBrowserFeatures();
+
         // show introduction div
         $('#TestTitle').html(this.TestConfig.TestName);
         $('#TestIntroduction').show();
@@ -691,46 +693,56 @@ $.extend({ alert: function (message, title) {
 
     }
 
-
     // ###################################################################
     // Check browser capabilities
-    ListeningTest.prototype.browserFeatures = function () {
-        
+    ListeningTest.prototype.checkBrowserFeatures = function () {
+
+        var features = new Object();
+
+        features.webAPIs = new Array();
+        features.webAPIs['webAudio'] = this.audioPool.waContext!==false;
+        features.webAPIs['Blob']     = !!window.Blob;
+
+        features.audioFormats = new Array();
+        var a = document.createElement('audio');
+        features.audioFormats['WAV'] = !!(a.canPlayType && a.canPlayType('audio/wav; codecs="1"').replace(/no/, ''));
+        features.audioFormats['OGG'] = !!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/, ''));
+        features.audioFormats['MP3'] = !!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''));
+        features.audioFormats['AAC'] = !!(a.canPlayType && a.canPlayType('audio/mp4; codecs="mp4a.40.2"').replace(/no/, ''));
+
+        this.browserFeatures = features;
     }
 
     // ###################################################################
     // Get browser features formatted as a HTML string
     ListeningTest.prototype.browserFeatureString = function () {
         var featStr = "Available HTML5 browser features:";
-        if (this.audioPool.waContext!==false)
-            featStr += " <span class='feature-available'>WebAudioAPI</span>";
+        if (this.browserFeatures.webAPIs['webAudio'])
+            featStr += " <span class='feature-available'>WebAudioAPI</span>, ";
         else
-            featStr += " <span class='feature-not-available'>WebAudioAPI</span>";
+            featStr += " <span class='feature-not-available'>WebAudioAPI</span>, ";
 
-        featStr += ",";
-        var a = document.createElement('audio');
-        if (!!(a.canPlayType && a.canPlayType('audio/wav; codecs="1"').replace(/no/, '')))
-            featStr += " <span class='feature-available'>WAV</span>";
+        if (this.browserFeatures.webAPIs['Blob'])
+            featStr += " <span class='feature-available'>BlobAPI</span>, ";
         else
-            featStr += " <span class='feature-not-available'>WAV</span>";
+            featStr += " <span class='feature-not-available'>BlobAPI</span>, ";
 
-        featStr += ",";
-        var a = document.createElement('audio');
-        if (!!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/, '')))
-            featStr += " <span class='feature-available'>Vorbis</span>";
+        if (this.browserFeatures.audioFormats['WAV'])
+            featStr += " <span class='feature-available'>WAV</span>, ";
         else
-            featStr += " <span class='feature-not-available'>Vorbis</span>";
+            featStr += " <span class='feature-not-available'>WAV</span>, ";
 
-        featStr += ",";
-        var a = document.createElement('audio');
-        if (!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, '')))
-            featStr += " <span class='feature-available'>MP3</span>";
+        if (this.browserFeatures.audioFormats['OGG'])
+            featStr += " <span class='feature-available'>Vorbis</span>, ";
         else
-            featStr += " <span class='feature-not-available'>MP3</span>";
+            featStr += " <span class='feature-not-available'>Vorbis</span>, ";
 
-        featStr += ",";
-        var a = document.createElement('audio');
-        if (!!(a.canPlayType && a.canPlayType('audio/mp4; codecs="mp4a.40.2"').replace(/no/, '')))
+        if (this.browserFeatures.audioFormats['MP3'])
+            featStr += " <span class='feature-available'>MP3</span>, ";
+        else
+            featStr += " <span class='feature-not-available'>MP3</span>, ";
+        
+        if (this.browserFeatures.audioFormats['AAC'])
             featStr += " <span class='feature-available'>AAC</span>";
         else
             featStr += " <span class='feature-not-available'>AAC</span>";

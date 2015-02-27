@@ -32,29 +32,35 @@ for ResFileName in dirListing:
 
 # Group results by test sets
 numResults = len(ResJSONList)
-numTests   = len(ResJSONList[0])
+numTests   = sum(1 for dict in ResJSONList[0] if 'TestID' in dict)
 RatingsDict = dict()
 RuntimesDict = dict()
 for ResJSONData in ResJSONList:
-    for i in range(0, numTests):
-        testID = ResJSONData[i]['TestID']
-
-        if not testID in RatingsDict:
-            RatingsDict[testID] = dict()
-
-        if not testID in RuntimesDict:
-            RuntimesDict[testID] = list()
-
-        # if runtime entry exists
-        if 'Runtime' in ResJSONData[i]:
-            RuntimesDict[testID].append(ResJSONData[i]['Runtime'])
-
-        # if rating entry exists
-        if 'rating' in ResJSONData[i]:
-            for testItem in ResJSONData[i]['rating']:
-                if not testItem in RatingsDict[testID]:
-                    RatingsDict[testID][testItem] = list()
-                RatingsDict[testID][testItem].append(ResJSONData[i]['rating'][testItem])
+    for i in range(0, numTests):        
+        if 'TestID' in ResJSONData[i]:
+            testID = ResJSONData[i]['TestID']
+    
+            if not testID in RatingsDict:
+                RatingsDict[testID] = dict()
+    
+            if not testID in RuntimesDict:
+                RuntimesDict[testID] = list()
+    
+            # if runtime entry exists
+            if 'Runtime' in ResJSONData[i]:
+                RuntimesDict[testID].append(ResJSONData[i]['Runtime'])
+    
+            # if rating entry exists
+            if 'rating' in ResJSONData[i]:
+                for testItem in ResJSONData[i]['rating']:
+                    if not testItem in RatingsDict[testID]:
+                        RatingsDict[testID][testItem] = list()
+                    RatingsDict[testID][testItem].append(ResJSONData[i]['rating'][testItem])
+        
+        elif 'UserComment' in ResJSONData[i]:
+            print('Comment: '+ResJSONData[i]['UserName']+'<'+ResJSONData[i]['UserEmail']+'>')
+            print(ResJSONData[i]['UserComment'])
+            print('--------------------')
 
 # plot and evaluate every single test set, output results to a csv file
 plotsX = np.ceil(np.sqrt(numTests))

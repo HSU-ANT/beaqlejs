@@ -23,7 +23,7 @@
         header('Content-type: application/json');
 
         // check if necessary data is available
-        if (isset($_POST['testresults'])) {
+        if (isset($_POST['testresults'] && (strlen($_POST['testresults'])<1024*64)) { // maximum allowed upload size is 64kB
         
             $testresults = $_POST['testresults'];
             
@@ -44,23 +44,6 @@
         	
             // write the file
             $succ = file_put_contents($results_prefix.$filename_data, print_r($testresults, TRUE));
-
-            // get comment and email if available
-            if (isset($_POST['useremail']) && (strlen($_POST['useremail'])<256)) {
-                $useremail = $_POST['useremail'];
-            } else {
-                $useremail = "";
-            }
-            if (isset($_POST['usercomment']) && (strlen($_POST['usercomment'])<2048)) {
-                $usercomment = $_POST['usercomment'];
-            } else {
-                $usercomment = "";
-            }
-            if (!empty($useremail) || !empty($usercomment)) {
-                $filename_comment = $filename."_".dechex($filenumber)."_comment.txt";
-                $comment_str = $username." : ".$useremail."\n\n".$usercomment;
-                file_put_contents($results_prefix.$filename_comment, $comment_str);
-            }
 
             if ($succ===false) {
                 $return['error'] = true;

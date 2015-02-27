@@ -651,19 +651,21 @@ $.extend({ alert: function (message, title) {
     // ###################################################################
     // submit test results to server
     ListeningTest.prototype.SubmitTestResults = function () {
-            
-        var UserName = $('#UserName').val();
-        var UserEMail = $('#UserEMail').val();
-        var UserComment = $('#UserComment').val();
+
+        var UserObj = new Object();
+        UserObj.UserName = $('#UserName').val();
+        UserObj.UserEmail = $('#UserEMail').val();
+        UserObj.UserComment = $('#UserComment').val();
+
+        var EvalResults = this.TestState.EvalResults;        
+        EvalResults.push(UserObj)
         
         var testHandle = this;
-        var EvalResultsJSON = JSON.stringify(testHandle.TestState.EvalResults);
-
         $.ajax({
                     type: "POST",
                     timeout: 5000,
                     url: testHandle.TestConfig.BeaqleServiceURL,
-                    data: {'testresults':EvalResultsJSON, 'username':UserName, 'useremail':UserEMail, 'usercomment':UserComment},
+                    data: {'testresults':JSON.stringify(EvalResults), 'username':UserObj.UserName},
                     dataType: 'json'})
             .done( function (response){
                     if (response.error==false) {

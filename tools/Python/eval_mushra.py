@@ -78,6 +78,8 @@ for testID in sorted(RatingsDict):
         else:
             testResArr = np.column_stack((testResArr, npTestData.T))
 
+    CsvFile.close()
+
     plotInd += 1
     if testResArr.shape[0] > 1:
         plt.figure(0)

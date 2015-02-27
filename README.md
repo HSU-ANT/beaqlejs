@@ -115,6 +115,22 @@ Contrary to ABX tests the MUSHRA procedure allows more detailed evaluations as i
 
 
 
+Browser support
+---------------------
+
+Our main interest regarding browser compatibility is the HTML5 `<audio>` element and its support for various file types, whereas in particular lossless formats like WAV or FLAC would be best suited for the desired application. An overview of the supported formats in various desktop browsers is given in the table below.
+Unfortunately no browser directly supports FLAC or other lossless compression so far. The only lossless, but also uncompressed, format widely accepted is WAV PCM with 16 bit sample precision. Solely the Internet Explorer is not capable to play back this file type.
+
+Format     |  IE   | Firefox | Chrome |  Opera | Safari
+-----------|-------|---------|--------|--------|--------
+WAV PCM    |  no   |  > 3.5  |  yes   | > 11.0 | > 3.1
+Ogg Vorbis |  no   |  > 3.5  |  yes   | > 10.5 | XiphQT
+MP3        | > 9.0 |  > 26*  |  yes   | > 14   | > 3.1
+ACC        | > 9.0 |  > 26*  |  yes   | > 14   | > 3.1
+
+(* not on Mac OS X)
+
+
 Contact
 ---------------------
 

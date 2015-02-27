@@ -247,6 +247,40 @@ function clientIsChrome() {
     return !!window.chrome;
 }
 
+// get date and time formatted as YYYMMDD-hhmmss
+function getDateStamp() {
+    var date = new Date();
+    function pad(num) {
+        num = num + '';
+        return num.length < 2 ? '0' + num : num;
+    }
+    return date.getFullYear() + 
+        pad(date.getMonth() + 1) +
+        pad(date.getDate()) + '-' +
+        pad(date.getHours()) + 
+        pad(date.getMinutes()) +
+        pad(date.getSeconds());
+}
+
+// provide a virtual download to text file with a specified file name
+function saveTextAsFile(txt, fileName)
+{
+	var fileBlob = new Blob([txt], {type:'text/plain'});
+
+	var downloadLink = document.createElement("a");
+	downloadLink.download = fileName;
+	downloadLink.innerHTML = "Download File";
+
+	// Firefox requires the link to be added to the DOM
+	// before it can be clicked.
+	downloadLink.href = window.URL.createObjectURL(fileBlob);
+	downloadLink.onclick = function (event) {document.body.removeChild(event.target);};
+	downloadLink.style.display = "none";
+	document.body.appendChild(downloadLink);
+
+	downloadLink.click();
+}
+
 // shuffle array entries using the Fisher-Yates algorithm
 // implementation inspired by http://bost.ocks.org/mike/shuffle/
 function shuffleArray(array) {
@@ -328,7 +362,6 @@ $.extend({ alert: function (message, title) {
         $('#TestTitle').html(this.TestConfig.TestName);
         $('#TestIntroduction').show();
         
-
         // setup buttons and controls
         var handlerObject = this;
         $('#VolumeSlider').slider({
@@ -371,7 +404,8 @@ $.extend({ alert: function (message, title) {
         $('#BtnPrevTest').button();
         $('#BtnPrevTest').on('click', $.proxy(handlerObject.prevTest, handlerObject));
         $('#BtnStartTest').button();
-        $('#BtnSubmitData').button({ icons: { primary: 'ui-icon-locked' }});        
+        $('#BtnSubmitData').button({ icons: { primary: 'ui-icon-signal-diag' }});     
+        $('#BtnDownloadData').button({ icons: { primary: 'ui-icon-arrowthickstop-1-s' }});
                 
 
         // install handler to warn user when test is running and he tries to leave the page
@@ -412,18 +446,33 @@ $.extend({ alert: function (message, title) {
                 $('#PlayerControls').hide();
                 $('#TestControls').hide();
                 $('#TestEnd').show();
-                
-                var resultsBox = document.getElementById('ResultsBox');
-                
-                resultsBox.innerHTML = this.formatResults();
-                                        
+
+                $('#ResultsBox > #JSONResults').hide();
+                $('#ResultsBox > #HTMLResults').hide();
+
+                var EvalResultsJSON = JSON.stringify(testHandle.TestState.EvalResults);
+                $('#ResultsBox > #JSONResults > textarea').html(EvalResultsJSON);
+                $('#ResultsBox > #HTMLResults').html(this.formatResults());
+                $("#ResultsBox").hide();
+                $("#SubmitBox").show();
+
+                $("#SubmitBox > .submitEmail").hide();
                 if (this.TestConfig.EnableOnlineSubmission) {
-                    $("#ResultsBox").hide();
-                    $("#SubmitBox").show();
+                    $("#SubmitBox > .submitOnline").show();
+                    $("#SubmitBox > .submitDownload").hide();
                 } else {
-                    $("#ResultsBox").show();
-                    $("#SubmitBox").hide();
-                    this.TestState.TestIsRunning = 0;
+                    $("#SubmitBox > .submitOnline").hide();
+                    if (this.TestConfig.SupervisorContact) {
+                        $("#SubmitBox > .submitEmail").show();
+                        $(".supervisorEmail").html(this.TestConfig.SupervisorContact);
+                    }
+                    if (this.browserFeatures.webAPIs['Blob']) {
+                        $("#SubmitBox > .submitDownload").show();
+                    } else {
+                        $("#SubmitBox > .submitDownload").hide();
+                        $("#ResultsBox").show();
+                        $('#ResultsBox > #JSONResults').show();
+                    }
                 }
             }
             return;
@@ -670,29 +719,60 @@ $.extend({ alert: function (message, title) {
             .done( function (response){
                     if (response.error==false) {
                         $('#SubmitBox').html("Your submission was successful.<br/><br/>");
-
-                        $("#ResultsBox").show();
-                        $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-check' }});
                         testHandle.TestState.TestIsRunning = 0;
                     } else {
-                        $('#SubmitBox').html("<span class='error'>The following error occured during your submission:<br/>"
-                                                +response.message+
-                                                "<br/><br/> Please copy/paste the following table content and send it to our email adress "
-                                                +testHandle.TestConfig.SupervisorContact+"<br/><br/> Sorry for any inconvenience!</span><br/><br/>"); 
-                        $("#ResultsBox").show();   
+                        $('#SubmitError').show();
+                        $('#SubmitError > #ErrorCode').html(response.message);
+                        $("#SubmitBox > .submitOnline").hide();
+                        if (this.TestConfig.SupervisorContact) {
+                            $("#SubmitBox > .submitEmail").show();
+                            $(".supervisorEmail").html(this.TestConfig.SupervisorContact);
+                        }
+                        if (testHandle.browserFeatures.webAPIs['Blob']) {
+                            $("#SubmitBox > .submitDownload").show();
+                        } else {
+                            $("#SubmitBox > .submitDownload").hide();
+                            $("#ResultsBox").show();
+                            $('#ResultsBox > #JSONResults').show();
+                        }
                         $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-alert' }});
                     }
                 })
             .fail (function (xhr, ajaxOptions, thrownError){
-                    $('#SubmitBox').html("<span class='error'>The following error occured during your submission:<br/>"
-                                            +xhr.status+
-                                            "<br/><br/> Please copy/paste the following table content and send it to our email adress "
-                                            +testHandle.TestConfig.SupervisorContact+"<br/><br/> Sorry for any inconvenience!</span><br/><br/>");
-                    $("#ResultsBox").show();   
-                    $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-alert' }});
+                    $('#SubmitError').show();
+                    $('#SubmitError > #ErrorCode').html(xhr.status);
+                    $("#SubmitBox > .submitOnline").hide();
+                    if (this.TestConfig.SupervisorContact) {
+                        $("#SubmitBox > .submitEmail").show();
+                        $(".supervisorEmail").html(this.TestConfig.SupervisorContact);
+                    }
+                    if (testHandle.browserFeatures.webAPIs['Blob']) {
+                        $("#SubmitBox > .submitDownload").show();
+                    } else {
+                        $("#SubmitBox > .submitDownload").hide();
+                        $("#ResultsBox").show();
+                        $('#ResultsBox > #JSONResults').show();
+                    }
                 });
-        $('#SubmitData').button('option',{ icons: { primary: 'load-indicator' }});
+        $('#BtnSubmitData').button('option',{ icons: { primary: 'load-indicator' }});
 
+    }
+
+    // ###################################################################
+    // submit test results to server
+    ListeningTest.prototype.DownloadTestResults = function () {
+
+        var UserObj = new Object();
+        UserObj.UserName = $('#UserName').val();
+        UserObj.UserEmail = $('#UserEMail').val();
+        UserObj.UserComment = $('#UserComment').val();
+
+        var EvalResults = this.TestState.EvalResults;        
+        EvalResults.push(UserObj)
+
+        saveTextAsFile(JSON.stringify(EvalResults), getDateStamp() + "_" + UserObj.UserName + ".txt");
+
+        this.TestState.TestIsRunning = 0;
     }
 
     // ###################################################################

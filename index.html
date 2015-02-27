@@ -92,8 +92,18 @@
         
         <!-- show some informations before submitting the results -->
         <div id="SubmitBox">
-            <p> 
+            <div id="SubmitError" class="error">
+                We are sorry, but the following error occured during your submission:
+                <p id="ErrorCode"></p>
+            </div>
+            <p class="submitOnline">
+                <!-- edit here if you want to change the information about online submission, e.g. add privacy policy information -->
                 Please submit the results to our server. Entering a name or email address is not mandatory
+                but it would help us to contact you if we have further questions. You can also leave a comment.
+            </p>
+            <p class="submitDownload">
+                <!-- edit here if you want to change the information about online submission, e.g. add privacy policy information -->
+                Please download and save the results. Entering a name or email address is not mandatory 
                 but it would help us to contact you if we have further questions. You can also leave a comment.
             </p>
             <table border=0 style="margin-left: auto;margin-right: auto;">
@@ -102,11 +112,18 @@
             <tr><td></td><td><textarea id="UserComment" cols="40" rows="4">Your comment...</textarea></td></tr>
             </table>
             <br />
-            <button id="BtnSubmitData" onclick="testHandle.SubmitTestResults();">Submit</button>
+            <button id="BtnSubmitData" class="submitOnline" onclick="testHandle.SubmitTestResults();">Submit</button>
+            <button id="BtnDownloadData" class="submitDownload" onclick="testHandle.DownloadTestResults();">Download</button>
+            <p class="submitEmail error">
+                <!-- edit here if you want to change the information about email submission, e.g. add privacy policy information -->
+                Results should be send to <span class="supervisorEmail"></span>
+            </p>
         </div>
         
         <!-- the test results are displayed in this box -->
         <div id="ResultsBox">
+            <div id="JSONResults"><p><b>JSON encoded results</b></p><textarea onfocus="this.select()"></textarea></div>
+            <div id="HTMLResults"></div>
         </div>
     </div>
 

@@ -96,6 +96,18 @@ body {
     background-color:#E98484;
 }
 
+.submitOnline{
+    display:none;
+}
+
+.submitDownload{
+    display:none;
+}
+
+#ResultsBox {
+    display: none;
+}
+
 #ResultsBox table {
     text-align:left;
     margin-left:auto;
@@ -105,6 +117,20 @@ body {
 #ResultsBox table td {
     border: 1px solid black;
     padding: 5px;
+}
+
+#ResultsBox textarea {
+    width:80%;
+    min-height: 300px;
+}
+
+#SubmitBox {
+    display: none;
+}
+
+#SubmitBox #SubmitError {
+    color: red;
+    display: none;
 }
 
 #TestControls{

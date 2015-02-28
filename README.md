@@ -64,10 +64,11 @@ The available options can be dividided into a set of general options whitch appl
         "TestName": "My Listening Test",     // <=  Name of the test
         "LoopByDefault": true,               // <=  Enable looped playback by default
         "ShowFileIDs": false,                // <=  Show file IDs for debugging (never enable this during real test!)
+        "ShowResults": false,                // <=  Show table with test results at the end
         "EnableABLoop": true,                // <=  Show controls to loop playback with an AB range slider
         "EnableOnlineSubmission": false,     // <=  Enable transmission of JSON encoded results to a web service
         "BeaqleServiceURL": "",              // <=  URL of the web service
-        "SupervisorContact": "",             // <=  Email adress of supervisor to contact for help
+        "SupervisorContact": "",             // <=  Email address of supervisor to contact for help or for submission of results by email
         "RandomizeTestOrder": true,          // <=  Present test sets in a random order
         "MaxTestsPerRun": -1,                // <=  Only run a random subset of all available tests, set to -1 to disable
         "Testsets": [ {...}, {...}, ... ],   // <=  Definition of test sets and files, more details below

@@ -3,6 +3,7 @@ var TestConfig = {
   "TestName": "ABX Demo Test",
   "LoopByDefault": true,
   "ShowFileIDs": false,
+  "ShowResults": false,
   "EnableABLoop": true,
   "EnableOnlineSubmission": false,
   "BeaqleServiceURL": "",

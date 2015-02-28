@@ -447,13 +447,12 @@ $.extend({ alert: function (message, title) {
                 $('#TestControls').hide();
                 $('#TestEnd').show();
 
-                $('#ResultsBox > #JSONResults').hide();
-                $('#ResultsBox > #HTMLResults').hide();
+                $('#ResultsBox').html(this.formatResults());
+                if (this.TestConfig.ShowResults)
+                    $("#ResultsBox").show();
+                else
+                    $("#ResultsBox").hide();
 
-                var EvalResultsJSON = JSON.stringify(testHandle.TestState.EvalResults);
-                $('#ResultsBox > #JSONResults > textarea').html(EvalResultsJSON);
-                $('#ResultsBox > #HTMLResults').html(this.formatResults());
-                $("#ResultsBox").hide();
                 $("#SubmitBox").show();
 
                 $("#SubmitBox > .submitEmail").hide();
@@ -471,7 +470,6 @@ $.extend({ alert: function (message, title) {
                     } else {
                         $("#SubmitBox > .submitDownload").hide();
                         $("#ResultsBox").show();
-                        $('#ResultsBox > #JSONResults').show();
                     }
                 }
             }
@@ -733,7 +731,6 @@ $.extend({ alert: function (message, title) {
                         } else {
                             $("#SubmitBox > .submitDownload").hide();
                             $("#ResultsBox").show();
-                            $('#ResultsBox > #JSONResults').show();
                         }
                         $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-alert' }});
                     }
@@ -751,7 +748,6 @@ $.extend({ alert: function (message, title) {
                     } else {
                         $("#SubmitBox > .submitDownload").hide();
                         $("#ResultsBox").show();
-                        $('#ResultsBox > #JSONResults').show();
                     }
                 });
         $('#BtnSubmitData').button('option',{ icons: { primary: 'load-indicator' }});

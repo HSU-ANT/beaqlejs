@@ -7,6 +7,7 @@ var TestConfig = {
   "RateMaxValue": 100,
   "RateDefaultValue":0,
   "ShowFileIDs": false,
+  "ShowResults": false,
   "LoopByDefault": true,
   "EnableABLoop": true,
   "EnableOnlineSubmission": false,

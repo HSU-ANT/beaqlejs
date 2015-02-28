@@ -106,6 +106,7 @@ body {
 
 #ResultsBox {
     display: none;
+    margin-top: 50px;
 }
 
 #ResultsBox table {

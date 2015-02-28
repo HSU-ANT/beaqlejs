@@ -2,16 +2,11 @@
 # BeaqleJS #
 ============
 
-[Description](#Description)
-[Basic Setup](#Basic-Setup)
-[Test Configuration](#Test-Configuration)
-[Browser support](#Browser-support)
-[Contact](#Contact)
-[Licence](#License)
+[Description](#Description) | [Basic Setup](#Basic-Setup) | [Test Configuration](#Test-Configuration) | [Browser support](#Browser-support) | [Contact](#Contact) | [Licence](#License)
 
 
-## Description ##
 -----------------
+## Description ##
 
 BeaqleJS provides a framework to create browser based listening tests and is purely based on open web standards like HTML5 and Javascript. Therefore, the test runs in any modern web browser and allows an easy distribution of the test environment to a significant amount of participants in combination with simple configuration. Currently it supports ABX and MUSHRA style test procedures but can be easily extended to other test schemes.
 
@@ -31,8 +26,8 @@ as a reference or link to our GitHub repository
     https://github.com/HSU-ANT/beaqlejs
 
 
-## Basic Setup ##
 -----------------
+## Basic Setup ##
 
 1. Download the test scripts
    - you can either clone the git repository `git clone https://github.com/HSU-ANT/beaqlejs.git`
@@ -58,8 +53,8 @@ as a reference or link to our GitHub repository
     Two example config files for the MUSHRA and ABX test class are already supplied in the `config/` folder to serve as a starting point. Detailed information about the different test classes and configuration can be found below.
 
 
-## Test Configuration ##
 ------------------------
+## Test Configuration ##
 
 ### General Options ###
 
@@ -123,9 +118,8 @@ Contrary to ABX tests the MUSHRA procedure allows more detailed evaluations as i
     ]
 
 
-
-## Browser support ##
 ---------------------
+## Browser support ##
 
 ### Codecs ###
 
@@ -143,15 +137,15 @@ ACC        | > 9.0 |  > 26*  |  yes   | > 14   | > 3.1
 
 ### Other features ###
 
-* Audio playback using HTML5 is widely supported by all major browsers since many years. However, not on IE versions below 9.0 which still have a small market share. [Browser list](http://caniuse.com/#feat=audio)
+* Audio playback using HTML5 is widely supported by all major browsers since many years. However, not on IE versions below 9.0 which still have a small market share. ([list browsers](http://caniuse.com/#feat=audio))
 
-* WebAudioAPI is used in BeaqleJS for smooth fade in/out at start and stop of playback and at the loop borders. It currently only works reliably with browsers based on the Chromium engine, although it is available in every major browser apart form the Internet Explorer. [Browser list](http://caniuse.com/#feat=audio-api)
+* WebAudioAPI is used in BeaqleJS for smooth fade in/out at start and stop of playback and at the loop borders. It currently only works reliably with browsers based on the Chromium engine, although it is available in every major browser apart form the Internet Explorer. ([list browsers](http://caniuse.com/#feat=audio-api))
 
-* FileAPI-Blob is necessary to provide the listening test results as a virtual download to be saved on the local harddisk. This API can be expected to be available in every browser of the last years, although not on IE versions below 9.0 which still have a small market share. [Browser list](http://caniuse.com/#feat=blobbuilder)
+* FileAPI-Blob is necessary to provide the listening test results as a virtual download to be saved on the local harddisk. This API can be expected to be available in every browser of the last years, although not on IE versions below 9.0 which still have a small market share. ([list browsers](http://caniuse.com/#feat=blobbuilder))
 
 
-## Online submission ##
 -----------------------
+## Online submission ##
 
 BeaqleJS can send the test results in JSON format to a web service to collect them in a central place. An example server side PHP script which can be used to receive and store the results is included in the `web_service/` subfolder. It only requires a webspace with PHP version 5.
 
@@ -167,22 +161,22 @@ BeaqleJS can send the test results in JSON format to a web service to collect th
 
 As with every public web service it is important to be aware about security aspects. In the current implementation there is no possibility to authenticate submitters, therefore everyone can potentially submit spoofed results if he is able to do some basic reverse engineering!
 
-However, there are two restrictions to avoid spamming of your sever:
+However, there are two provisions to avoid spamming of your sever:
 
 * The results JSON object is limited to a size of 64kB which is a lot for listening test results, but not enough to abuse your server as a hosting facility
 * File names in the `results/` folder contain a random string, so it is not possible to access the submitted data without listing the whole directory
 
 
-## Contact ##
 -------------
+## Contact ##
 
 http://hsu-ant.github.io/beaqlejs
 
 skraft (AT) hsu-hh.de
 
 
-## License ##
 -------------
+## License ##
 
 The complete sources, html and script files as well as images are released unter the *GPLv3 
 license*. A copy of the GPL is provided in the `LICENSE.txt` file.

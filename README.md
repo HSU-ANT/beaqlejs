@@ -2,7 +2,7 @@
 # BeaqleJS #
 ============
 
-[Description](#Description) | [Basic Setup](#Basic-Setup) | [Test Configuration](#Test-Configuration) | [Browser support](#Browser-support) | [Contact](#Contact) | [Licence](#License)
+[Description](#description) | [Basic Setup](#basic-setup) | [Test Configuration](#test-configuration) | [Browser Support](#browser-support) | [Online Submission](#online-submission)  | [Contact](#contact) | [Licence](#license)
 
 
 -----------------
@@ -120,12 +120,23 @@ Contrary to ABX tests the MUSHRA procedure allows more detailed evaluations as i
 
 
 ---------------------
-## Browser support ##
+## Browser Support ##
+
+BeaqleJS in general will run well in any recent web browsers out in the wild. The only noteworthy exceptions are the Internet Explorer versions below 9 which still have a market share of a few percent and unfortunately miss the required FileAPI. Participants will get a warning if they open the listening test with one of these old versions.
+
+### HTML5 Features ###
+
+* Audio playback using HTML5 is widely supported by all major browsers since many years (except IE below version 9.0). ([list browsers](http://caniuse.com/#feat=audio))
+
+* FileAPI-Blob is necessary to provide the listening test results as a virtual download to be saved on the local harddisk. This API can be expected to be available in every browser of the last years  (except IE below version 9.0). ([list browsers](http://caniuse.com/#feat=blobbuilder))
+
+Optionally:
+
+* WebAudioAPI is used in BeaqleJS for smooth fade in/out at start/stop of playback and at the loop borders. It currently only works reliably with browsers based on the Chromium engine, although it is available in every major browser apart from the Internet Explorer. ([list browsers](http://caniuse.com/#feat=audio-api))
 
 ### Codecs ###
 
-Our main interest regarding browser compatibility is the HTML5 `<audio>` element and its support for various file types, whereas in particular lossless formats like WAV or FLAC would be best suited for the desired application. An overview of the supported formats in various desktop browsers is given in the table below.
-Unfortunately no browser directly supports FLAC or other lossless compression so far. The only lossless, but also uncompressed, format widely accepted is WAV PCM with 16 bit sample precision. Solely the Internet Explorer is not capable to play back this file type.
+Although most browsers today support the HTML5 `<audio>` tag, the supported formats and codecs vary a lot. Unfortunately no browser directly supports FLAC or other lossless compression so far. The only lossless, but also uncompressed, format widely accepted is WAV PCM with 16 bit sample precision. Solely the Internet Explorer is not capable to play back this file type.
 
 Format     |  IE   | Firefox | Chrome |  Opera | Safari
 -----------|-------|---------|--------|--------|--------
@@ -136,17 +147,9 @@ ACC        | > 9.0 |  > 26*  |  yes   | > 14   | > 3.1
 
 (* not on Mac OS X)
 
-### Other features ###
-
-* Audio playback using HTML5 is widely supported by all major browsers since many years. However, not on IE versions below 9.0 which still have a small market share. ([list browsers](http://caniuse.com/#feat=audio))
-
-* WebAudioAPI is used in BeaqleJS for smooth fade in/out at start and stop of playback and at the loop borders. It currently only works reliably with browsers based on the Chromium engine, although it is available in every major browser apart form the Internet Explorer. ([list browsers](http://caniuse.com/#feat=audio-api))
-
-* FileAPI-Blob is necessary to provide the listening test results as a virtual download to be saved on the local harddisk. This API can be expected to be available in every browser of the last years, although not on IE versions below 9.0 which still have a small market share. ([list browsers](http://caniuse.com/#feat=blobbuilder))
-
 
 -----------------------
-## Online submission ##
+## Online Submission ##
 
 BeaqleJS can send the test results in JSON format to a web service to collect them in a central place. An example server side PHP script which can be used to receive and store the results is included in the `web_service/` subfolder. It only requires a webspace with PHP version 5.
 

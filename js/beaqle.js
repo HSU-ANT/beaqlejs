@@ -328,11 +328,12 @@ $.extend({ alert: function (message, title) {
             alert('Config file could not be loaded!');
         }
 
-        // check for IE as it does not support .wav in <audio> tags
-        // if (clientIsIE()) {
-        //    alert('Internet Explorer is not supported! Please use Firefox, Opera, Google Chrome or any other HTML5 capable browser.');
-        //    return;
-        // }
+        // check for IE as it does not support the FileAPI-Blob constructor below version 9
+        if ((clientIsIE() > 0) && (clientIsIE() < 9)) {
+           $('#LoadOverlay').show();
+           $('#LoadOverlay').append('<p class="error">Internet Explorer version 8 and below is unfortunately not supported by BeaqleJS. Please update to a recent release or choose another browser.</p>');
+           return;
+        }
         
         this.TestConfig = TestData;
 

@@ -2,7 +2,15 @@
 # BeaqleJS #
 ============
 
-[Description](#description) | [Basic Setup](#basic-setup) | [Test Configuration](#test-configuration) | [Browser Support](#browser-support) | [Online Submission](#online-submission)  | [Contact](#contact) | [Licence](#license)
+Table of contents
+
+* [Description](#description)
+* [Basic Setup](#basic-setup)
+* [Test Configuration](#test-configuration)
+* [Browser Support](#browser-support)
+* [Online Submission](#online-submission)
+* [Contact](#contact)
+* [License](#license)
 
 
 -----------------

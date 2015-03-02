@@ -82,7 +82,7 @@
             
             // if end is reached ...
             if (progress >= _this.ABPos[1]) {
-                if (this.waContext!==false) {
+                if (_this.waContext!==false) {
                     if (_this.LoopAudio == true) {
                         var currID = _this.IDPlaying;
                         setTimeout( function(){_this.play(currID)}, _this.fadeOutTime*1000 + 10);                    
@@ -169,7 +169,7 @@
     AudioPool.prototype.play = function(ID){
         var audiotag = $('#'+this.PoolID+' > #audio'+ID).get(0);
         
-        audiotag.currentTime = 0.0001 + this.ABPos[0] / 100 * audiotag.duration;
+        audiotag.currentTime = 0.000001 + this.ABPos[0] / 100.0 * audiotag.duration;
         
         if (this.waContext!==false) {
             //this.gainNodes[ID].gain.cancelScheduledValues(this.waContext.currentTime);
@@ -199,6 +199,7 @@
                 this.IDPlaying = -1;
             } else {
                 audiotag.pause();
+                this.IDPlaying = -1;
             }
 
         }

@@ -56,7 +56,7 @@
             this.waContext = false;
 
         // set to false to manually disable WebAudioAPI support
-        // this.waContext = false;
+        this.waContext = false;
 
         // setup regular callback timer to check current playback position
         var _this = this;

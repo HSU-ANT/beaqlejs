@@ -307,11 +307,17 @@ function saveTextAsFile(txt, fileName)
 	downloadLink.download = fileName;
 	downloadLink.innerHTML = "Download File";
 
-	// Firefox requires the link to be added to the DOM
-	// before it can be clicked.
+    // safari does not download text files but tries to open them in the browser
+    // so let's at least open a new window for that
+    if (clientIsSafari())
+        downloadLink.target = "_blank";
+
 	downloadLink.href = window.URL.createObjectURL(fileBlob);
 	downloadLink.onclick = function (event) {document.body.removeChild(event.target);};
 	downloadLink.style.display = "none";
+
+	// Firefox requires the link to be added to the DOM
+	// before it can be clicked.
 	document.body.appendChild(downloadLink);
 
 	downloadLink.click();

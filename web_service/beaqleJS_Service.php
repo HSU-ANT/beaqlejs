@@ -23,7 +23,7 @@
         header('Content-type: application/json');
 
         // check if necessary data is available
-        if (isset($_POST['testresults'] && (strlen($_POST['testresults'])<1024*64)) { // maximum allowed upload size is 64kB
+        if (isset($_POST['testresults']) && (strlen($_POST['testresults'])<1024*64)) { // maximum allowed upload size is 64kB
         
             $testresults = $_POST['testresults'];
             

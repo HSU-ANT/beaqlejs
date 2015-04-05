@@ -38,9 +38,9 @@ as a reference or link to our GitHub repository
 ## Basic Setup ##
 
 1. Download the test scripts
-   - you can either clone the git repository `git clone https://github.com/HSU-ANT/beaqlejs.git`
+   - you can either get a stable release from `https://github.com/HSU-ANT/beaqlejs/releases` 
+   - or clone the git repository `git clone https://github.com/HSU-ANT/beaqlejs.git`
    - or simply download a zip of the current HEAD revision at `https://github.com/HSU-ANT/beaqlejs/archive/master.zip`
-   - or choose an older release at `https://github.com/HSU-ANT/beaqlejs/releases`
 
 2. Uncomment the line where the desired test class is initialized and loaded in the header of the `index.html` file.
 
@@ -130,9 +130,9 @@ Contrary to ABX tests the MUSHRA procedure allows more detailed evaluations as i
 ---------------------
 ## Browser Support ##
 
-BeaqleJS in general will run well in any recent web browsers out in the wild. The only noteworthy exceptions are the Internet Explorer versions below 9 which still have a market share of a few percent and unfortunately miss the required FileAPI. Participants will get a warning if they open the listening test with one of these old versions.
+BeaqleJS in general will run well in any recent web browser out in the wild. The only noteworthy exceptions are the Internet Explorer versions below 9 which still have a market share of a few percent and unfortunately miss the required FileAPI. Participants will get a warning if they open the listening test with one of these old versions.
 
-### HTML5 Features ###
+### Required HTML5 Features ###
 
 * Audio playback using HTML5 is widely supported by all major browsers since many years (except IE below version 9.0). ([list browsers](http://caniuse.com/#feat=audio))
 
@@ -167,13 +167,13 @@ BeaqleJS can send the test results in JSON format to a web service to collect th
 
 2. Try to execute the script in your browser. For example, point your browser to `http://yourdomain.com/mysubfolder/beaqleJS_Service.php`. The script performs a self-test and checks PHP version and write permission of the `results/` folder.
 
-3. Enable online submission in the BeaqleJS config (`"EnableOnlineSubmission": false`) and set the `BeaqleServiceURL` to `http://yourdomain.com/mysubfolder/beaqleJS_Service.php`.
+3. Enable online submission in the BeaqleJS config (`"EnableOnlineSubmission": true`) and set the `BeaqleServiceURL` to `http://yourdomain.com/mysubfolder/beaqleJS_Service.php`.
 
 ### Security ###
 
-As with every public web service it is important to be aware about security aspects. In the current implementation there is no possibility to authenticate submitters, therefore everyone can potentially submit spoofed results if he is able to do some basic reverse engineering!
+As with every public web service it is important to be aware about security aspects. In the current implementation there is no possibility to authenticate submitters, therefore everyone can potentially submit spoofed results if he is able to do some basic reverse engineering! However, this is also a common risk with every other public and open survey platform.
 
-However, there are two provisions to avoid spamming of your sever:
+There are two provisions to avoid spamming of your sever:
 
 * The results JSON object is limited to a size of 64kB which is a lot for listening test results, but not enough to abuse your server as a hosting facility
 * File names in the `results/` folder contain a random string, so it is not possible to access the submitted data without listing the whole directory

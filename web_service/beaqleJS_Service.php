@@ -30,6 +30,11 @@
             // generate filename
             if (isset($_POST['username']) && (strlen($_POST['username'])<128)) {
                 $username = $_POST['username'];
+                $username = str_replace(' ', '_',  $username);
+                // Remove anything from the username which isnt a standard letter, number, _ or -.
+                // This is necessary to avoid path injection
+                // because the username is used within the file name.
+                $username = preg_replace('/[^a-zA-Z0-9_-]/s', '',  $username);
             } else {
                 $username = "";
             }

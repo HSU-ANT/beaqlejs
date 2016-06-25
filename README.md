@@ -146,6 +146,10 @@ A typical application of ABX tests would be the evaluation of the transparency o
 ]
 ```
 
+## Preference Testing ##
+
+A preference test (or A/B test) is a simplified version of ABX in which the listener is to decide which of two stimuli sounds better. A typical application of preference tests would be the comparison of different speech synthesis methods. Over a range of stimuli and listeners, one method (A or B) might be shown to be better than the other (one might use a sign test for comparison of results for A and B). Configuration is identical to the ABX test; however, no X is presented to the user.
+
 ## MUSHRA ##
 
 In a MUSHRA test (ITU-R BS.1116-1) the listener gets presented an item marked as reference together with several anonymous test items. By using a slider for each test item he has to rate how close the items are to the reference on top. Among the test items there is usually also one hidden reference and one, or several, anchor signals to prove the validity of the ratings and the qualification of the participants.

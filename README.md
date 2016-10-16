@@ -120,6 +120,7 @@ var TestConfig = {
   "RandomizeTestOrder": true,        // <=  Present test sets in a random order
   "MaxTestsPerRun": -1,              // <=  Only run a random subset of all available
                                      //     tests, set to -1 to disable
+  "AudioRoot": "",                   // <=  path to prepend to all audio URLs in the testsets
   "Testsets": [ {...}, {...}, ... ], // <=  Definition of test sets and files, more
                                      //     details below
 }

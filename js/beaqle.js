@@ -53,7 +53,7 @@
              break;
         }
         
-	    // only enable webAudio on Chrome, Safri and Opera.
+	    // only enable webAudio on Chrome, Safari and Opera.
         if (!(clientIsChrome() || clientIsSafari() || clientIsOpera()))
             this.waContext = false;
 
@@ -378,6 +378,9 @@ $.extend({ alert: function (message, title) {
         }
         
         this.TestConfig = TestData;
+        if (typeof this.TestConfig.AudioRoot === "undefined") {
+           this.TestConfig.AudioRoot = "";
+        }
 
         // some state variables
         this.TestState = {
@@ -735,7 +738,9 @@ $.extend({ alert: function (message, title) {
     // add and load audio file with specified ID
     ListeningTest.prototype.addAudio = function (TestIdx, fileID, relID) {
         this.TestState.AudiosInLoadQueue += 1;
-        this.audioPool.addAudio(this.TestConfig.Testsets[TestIdx].Files[fileID], relID)
+        this.audioPool.addAudio(this.TestConfig.AudioRoot +
+                                this.TestConfig.Testsets[TestIdx].Files[fileID],
+                                relID)
     }
 
     // ###################################################################

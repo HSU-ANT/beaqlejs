@@ -141,11 +141,11 @@
 
         if (this.waContext!==false) {
             var gainNode = this.waContext.createGain();
-            gainNode.value = 0.00000001;
             var source = this.waContext.createMediaElementSource(audiotag);
             source.connect(gainNode);
             gainNode.connect(this.waContext.destination);
-            gainNode.gain.setValueAtTime(0.0000001, this.waContext.currentTime + this.fadeDelay*10);
+            gainNode.gain.value = 0.0000001;  // fixes https://bugzilla.mozilla.org/show_bug.cgi?id=1213313
+            gainNode.gain.setValueAtTime(0.0000001, this.waContext.currentTime);
             this.gainNodes[ID] = gainNode;
         }
         
@@ -177,6 +177,8 @@
             var loopLen = (this.ABPos[1] - this.ABPos[0]) / 100.0 * audiotag.duration;
             if (loopLen > this.fadeOutTime*2 + this.positionUpdateInterval*2) {
                 this.gainNodes[ID].gain.cancelScheduledValues(this.waContext.currentTime);
+                this.gainNodes[ID].gain.value = 0.0000001;  // fixes https://bugzilla.mozilla.org/show_bug.cgi?id=1213313
+                this.gainNodes[ID].gain.setValueAtTime(0.0000001, this.waContext.currentTime);                
                 this.gainNodes[ID].gain.setTargetAtTime(1.0, this.waContext.currentTime + this.fadeDelay, this.fadeInTime);
                 this.LoopFade = false;
                 audiotag.play();

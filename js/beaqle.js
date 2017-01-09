@@ -56,7 +56,7 @@
         }
 
         // IE does not support the WebAudioAPI
-        if (clientIsIE())
+        if (clientIsIE() || clientIsSafari())
             this.waContext = false;
 
         // Firefox needs a longer delay before we start a fading curve,

@@ -31,7 +31,9 @@
         this.ABPos = [0, 100];
         this.PoolID = PoolID;
         this.IDPlaying = -1;
-        this.fadeOutTime = 0.03;
+        this.fadeInTime  = 0.03;
+        this.fadeOutTime = 0.01;
+        this.fadeDelay   = 0.01;
         this.positionUpdateInterval = 0.005;
 
         // web audio is only supported for same origin
@@ -52,10 +54,15 @@
              this.waContext = false;
              break;
         }
-        
-	    // only enable webAudio on Chrome, Safri and Opera.
-        if (!(clientIsChrome() || clientIsSafari() || clientIsOpera()))
+
+        // IE does not support the WebAudioAPI
+        if (clientIsIE())
             this.waContext = false;
+
+        // Firefox needs a longer delay before we start a fading curve,
+        // otherwise the fading is not recognized
+        if (clientIsFirefox())
+            this.fadeDelay = 0.05;
 
         // set to false to manually disable WebAudioAPI support
         //this.waContext = false;
@@ -80,8 +87,8 @@
             
             // calculate progress including a look ahead for fade out or loop
             var progress = 0;
-            progress = (audiotag.currentTime+_this.positionUpdateInterval+_this.fadeOutTime) / audiotag.duration * 100.0;
-            
+            progress = (audiotag.currentTime+_this.positionUpdateInterval+_this.fadeOutTime*2) / audiotag.duration * 100.0;
+
             // if end is reached ...
             if ((progress >= _this.ABPos[1]) && (!_this.LoopFade)) {
                 if (_this.LoopAudio == true) {
@@ -138,7 +145,7 @@
             var source = this.waContext.createMediaElementSource(audiotag);
             source.connect(gainNode);
             gainNode.connect(this.waContext.destination);
-            gainNode.gain.setValueAtTime(0.0000001, 0);
+            gainNode.gain.setValueAtTime(0.0000001, this.waContext.currentTime + this.fadeDelay*10);
             this.gainNodes[ID] = gainNode;
         }
         
@@ -170,7 +177,7 @@
             var loopLen = (this.ABPos[1] - this.ABPos[0]) / 100.0 * audiotag.duration;
             if (loopLen > this.fadeOutTime*2 + this.positionUpdateInterval*2) {
                 this.gainNodes[ID].gain.cancelScheduledValues(this.waContext.currentTime);
-                this.gainNodes[ID].gain.setTargetAtTime(1, this.waContext.currentTime, this.fadeOutTime/1.0 );
+                this.gainNodes[ID].gain.setTargetAtTime(1.0, this.waContext.currentTime + this.fadeDelay, this.fadeInTime);
                 this.LoopFade = false;
                 audiotag.play();
             }
@@ -187,7 +194,7 @@
         if (this.waContext!==false) {
             // fade out
             this.gainNodes[this.IDPlaying].gain.cancelScheduledValues(this.waContext.currentTime);
-            this.gainNodes[this.IDPlaying].gain.setTargetAtTime(0, this.waContext.currentTime, this.fadeOutTime/8.0 );
+            this.gainNodes[this.IDPlaying].gain.setTargetAtTime(0.0, this.waContext.currentTime + this.fadeDelay, this.fadeOutTime);
             this.LoopFade = true;
 
             var audiotag = $('#'+this.PoolID+' > #audio'+this.IDPlaying).get(0);
@@ -197,11 +204,11 @@
             setTimeout( function(){
                     _this.LoopFade = false;
                     audiotag.currentTime = 0.000001 + _this.ABPos[0] / 100.0 * audiotag.duration;
-                    _this.gainNodes[_this.IDPlaying].gain.cancelScheduledValues(_this.waContext.currentTime);       
-                    _this.gainNodes[_this.IDPlaying].gain.setTargetAtTime(1, _this.waContext.currentTime, _this.fadeOutTime/1.0 );
-                }, 
-                this.fadeOutTime*1000 + 2
-            );            
+                    _this.gainNodes[_this.IDPlaying].gain.cancelScheduledValues(_this.waContext.currentTime);
+                    _this.gainNodes[_this.IDPlaying].gain.setTargetAtTime(1.0, _this.waContext.currentTime + _this.fadeDelay, _this.fadeInTime);
+                },
+                (_this.fadeOutTime*2.0 + _this.fadeDelay)*1000.0 + 5.0
+            );
         } else {
             // return to the start marker
             var audiotag = $('#'+this.PoolID+' > #audio'+this.IDPlaying).get(0);
@@ -218,11 +225,11 @@
             var audiotag = $('#'+this.PoolID+' > #audio'+this.IDPlaying).get(0);
             if ((this.waContext!==false) && (!audiotag.paused)) {
                 this.gainNodes[this.IDPlaying].gain.cancelScheduledValues(this.waContext.currentTime);
-                this.gainNodes[this.IDPlaying].gain.setTargetAtTime(0, this.waContext.currentTime, this.fadeOutTime/8.0 );
-        
+                this.gainNodes[this.IDPlaying].gain.setTargetAtTime(0.0, this.waContext.currentTime + this.fadeDelay, this.fadeOutTime );
+
                 var _this  = this;
                 var prevID = this.IDPlaying;
-                setTimeout( function(){if (_this.IDPlaying!==prevID) audiotag.pause();}, _this.fadeOutTime*1000 + 5);
+                setTimeout( function(){if (_this.IDPlaying!==prevID) audiotag.pause();}, (_this.fadeOutTime*2.0 + _this.fadeDelay)*1000.0 + 5.0);
             } else {
                 audiotag.pause();
             }
@@ -266,6 +273,11 @@ function clientIsIE() {
         return ieversion;
     }
     return 0;
+}
+
+// check for Firefox
+function clientIsFirefox() {
+    return typeof InstallTrigger !== 'undefined';
 }
 
 // check for Google Chrome/Chromium

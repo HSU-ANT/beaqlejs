@@ -188,7 +188,7 @@ BeaqleJS in general will run well in any recent web browser out in the wild. The
 
 Optionally:
 
-* WebAudioAPI is used in BeaqleJS for smooth fade in/out at start/stop of playback and at the loop borders. It currently only works reliably with browsers based on the Chromium engine, although it is available in every major browser apart from the Internet Explorer ([list browsers](http://caniuse.com/#feat=audio-api)).
+* WebAudioAPI is used in BeaqleJS for smooth fade in/out at start/stop of playback and at the loop borders. It is available in every major browser apart from the Internet Explorer ([list browsers](http://caniuse.com/#feat=audio-api)). Due to different bugs and inconsistencies in the WebAudioAPI, smooth fade in/out is not guaranteed to work equally well on all browsers. Best results were obtained with browsers based on the Chromium engine.
 
 ## Codecs ##
 

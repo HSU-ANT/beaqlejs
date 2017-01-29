@@ -182,26 +182,36 @@ BeaqleJS in general will run well in any recent web browser out in the wild. The
 
 ## Required HTML5 Features ##
 
-* Audio playback using HTML5 is widely supported by all major browsers since many years (except IE below version 9.0). ([list browsers](http://caniuse.com/#feat=audio))
+* Audio playback using HTML5 is widely supported by all major browsers since many years ([list browsers](http://caniuse.com/#feat=audio)).
 
-* FileAPI-Blob is necessary to provide the listening test results as a virtual download to be saved on the local harddisk. This API can be expected to be available in every browser of the last years  (except IE below version 9.0). ([list browsers](http://caniuse.com/#feat=blobbuilder))
+* FileAPI-Blob is necessary to provide the listening test results as a virtual download to be saved on the local harddisk. This API can be expected to be available in every browser released in the last years ([list browsers](http://caniuse.com/#feat=blobbuilder)).
 
 Optionally:
 
-* WebAudioAPI is used in BeaqleJS for smooth fade in/out at start/stop of playback and at the loop borders. It currently only works reliably with browsers based on the Chromium engine, although it is available in every major browser apart from the Internet Explorer. ([list browsers](http://caniuse.com/#feat=audio-api))
+* WebAudioAPI is used in BeaqleJS for smooth fade in/out at start/stop of playback and at the loop borders. It currently only works reliably with browsers based on the Chromium engine, although it is available in every major browser apart from the Internet Explorer ([list browsers](http://caniuse.com/#feat=audio-api)).
 
 ## Codecs ##
 
-Although most browsers today support the HTML5 `<audio>` tag, the supported formats and codecs vary a lot. Unfortunately no browser directly supports FLAC or other lossless compression so far. The only lossless, but also uncompressed, format widely accepted is WAV PCM with 16 bit sample precision. Solely the Internet Explorer is not capable to play back this file type.
+Although most browsers today support the HTML5 `<audio>` tag, the supported formats and codecs vary a lot. Unfortunately, support for lossless compression like FLAC has not yet reached a sufficient spread. The only lossless, but also uncompressed, format widely accepted is WAV PCM with 16 bit sample precision. Solely the Internet Explorer is not capable to play back this file type.
 
-Format     |  IE   | Firefox | Chrome |  Opera | Safari
------------|-------|---------|--------|--------|--------
-WAV PCM    |  no   |  > 3.5  |  yes   | > 11.0 | > 3.1
-Ogg Vorbis |  no   |  > 3.5  |  yes   | > 10.5 | XiphQT
-MP3        | > 9.0 |  > 26*  |  yes   | > 14   | > 3.1
-ACC        | > 9.0 |  > 26*  |  yes   | > 14   | > 3.1
+The following table lists the minimum browser version required for different audio formats:
 
-(* not on Mac OS X)
+Format     |  IE   |  Edge  | Firefox | Chrome |  Opera | Safari
+-----------|-------|--------|---------|--------|--------|--------
+WAV PCM    |  no   |   12   |   3.5   |   8    |  11.5  |   3.2
+FLAC       |  no   |   no   |   51    |   56   |   42   |   no
+Ogg Vorbis |  no   |   no   |   3.5   |   4    |  11.5  | XiphQT
+MP3        |  9.0  |   12   |   22    |   4    |   15   |   4
+ACC        |  9.0  |   12   |   22*   |   12   |   15   |   4
+
+(* not on all platforms, requires a pre-installed codec)
+
+Source `canisue.com`:
+   * [WAV PCM](http://caniuse.com/#feat=wav)
+   * [FLAC](http://caniuse.com/#feat=flac)
+   * [Ogg Vorbis](http://caniuse.com/#feat=ogg-vorbis)
+   * [MP3](http://caniuse.com/#feat=mp3)
+   * [AAC](http://caniuse.com/#feat=aac)
 
 
 # Online Submission #

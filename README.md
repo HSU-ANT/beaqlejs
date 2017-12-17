@@ -71,12 +71,12 @@ Docker allows you to easily setup a webserver with PHP in order to run and test
 BeaqleJS locally on your computer.  More information about Docker can be
 found at `https://www.docker.com/`.
 
-### Setup ###
+### Manual Setup ###
 
 Create a container for the first time and mount your configured BeaqleJS folder
 into the container.
 
-    docker run -d -p 80:80 -v /path/to/BeaqleJS:/var/www/html --name beaqlejs-server php:7.0-apache
+    $> docker run -d -p 80:80 -v /path/to/BeaqleJS:/var/www/html --name beaqlejs-server php:7.0-apache
 
 You can then access BeaqleJS at `http://localhost/`.
 
@@ -86,16 +86,40 @@ stop the Docker container when it is not needed anymore.
 
 You can stop the Docker container by
 
-    docker stop beaqlejs-server
+    $> docker stop beaqlejs-server
 
 and restart it again with
 
-    docker start beaqlejs-server
+    $> docker start beaqlejs-server
 
 The current state of all available Docker containers can be investigated by
 
-    docker ps -a
+    $> docker ps -a
 
+### Docker Compose ###
+
+[Docker Compose](https://docs.docker.com/compose/install/) is a tool to run a server application from a simple configuration file. 
+
+Go to the directory with the `docker-compose.yml` file in the BeaqleJS file tree:
+
+    $> cd tools/Docker/
+    
+Create a container for the first time and initialize it:
+
+    $> docker-compose up
+
+Start and stop an existing service:
+
+    $> docker-compose start
+    $> docker-compose stop
+
+Completely remove the service:
+
+    $> docker-compose down
+
+The status of the service can be inspected with:
+    
+    $> docker-compose ps 
 
 # Test Configuration #
 

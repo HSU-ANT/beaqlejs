@@ -28,12 +28,14 @@
         this.NumUsed = 0;
         this.LoopAudio = 0;
         this.LoopFade = false;
+        this.AutoReturn = true;
         this.ABPos = [0, 100];
         this.PoolID = PoolID;
         this.IDPlaying = -1;
         this.fadeInTime  = 0.03;
         this.fadeOutTime = 0.01;
         this.fadeDelay   = 0.01;
+        this.lastAudioPosition = 0;
         this.positionUpdateInterval = 0.005;
 
         // web audio is only supported for same origin
@@ -170,8 +172,14 @@
     
     // play audio with specified ID
     AudioPool.prototype.play = function(ID){
-        var audiotag = $('#'+this.PoolID+' > #audio'+ID).get(0);        
-        audiotag.currentTime = 0.000001 + this.ABPos[0] / 100.0 * audiotag.duration;
+        var audiotag = $('#'+this.PoolID+' > #audio'+ID).get(0);
+        
+        if ((this.AutoReturn===false) &&
+            (this.lastAudioPosition + this.fadeDelay <= (this.ABPos[1] / 100 * audiotag.duration)) &&
+            (this.lastAudioPosition >= (this.ABPos[0] / 100 * audiotag.duration)))
+                audiotag.currentTime = this.lastAudioPosition;
+        else
+            audiotag.currentTime = 0.000001 + this.ABPos[0] / 100.0 * audiotag.duration;
 
         if (this.waContext!==false) {
             var loopLen = (this.ABPos[1] - this.ABPos[0]) / 100.0 * audiotag.duration;
@@ -225,6 +233,7 @@
         if (this.IDPlaying!==-1) {
  
             var audiotag = $('#'+this.PoolID+' > #audio'+this.IDPlaying).get(0);
+            this.lastAudioPosition = audiotag.currentTime;
             if ((this.waContext!==false) && (!audiotag.paused)) {
                 this.gainNodes[this.IDPlaying].gain.cancelScheduledValues(this.waContext.currentTime);
                 this.gainNodes[this.IDPlaying].gain.setTargetAtTime(0.0, this.waContext.currentTime + this.fadeDelay, this.fadeOutTime );
@@ -257,6 +266,16 @@
     // toggle loop mode
     AudioPool.prototype.toggleLooped = function() {
         this.LoopAudio = !this.LoopAudio;
+    }
+
+    // set auto return mode
+    AudioPool.prototype.setAutoReturn = function(autoReturn) {
+            this.AutoReturn = autoReturn;
+    }
+
+    // toggle auto return mode
+    AudioPool.prototype.toggleAutoReturn = function() {
+        this.AutoReturn = !this.AutoReturn;
     }
 
 
@@ -391,7 +410,9 @@ $.extend({ alert: function (message, title) {
            return;
         }
         
+        // Load and verify config
         this.TestConfig = TestData;
+        this.setDefaults(this.TestConfig);
 
         // some state variables
         this.TestState = {
@@ -412,6 +433,7 @@ $.extend({ alert: function (message, title) {
         this.audioPool.onError = $.proxy(this.audioErrorCallback, this);
         this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
         this.audioPool.setLooped(this.TestConfig.LoopByDefault);
+        this.audioPool.setAutoReturn(this.TestConfig.AutoReturnByDefault);
 
         this.checkBrowserFeatures();
 
@@ -447,13 +469,19 @@ $.extend({ alert: function (message, title) {
         }
         $('#PauseButton').button();
 
-        //$('#ChkLoopAudio').button();
         if (this.TestConfig.LoopByDefault) {
             $('#ChkLoopAudio').prop("checked", true);
         } else {
             $('#ChkLoopAudio').prop("checked", false);
         }
         $('#ChkLoopAudio').on('change', $.proxy(handlerObject.toggleLooping, handlerObject));
+        
+        if (this.TestConfig.AutoReturnByDefault) {
+            $('#ChkAutoReturn').prop("checked", true);
+        } else {
+            $('#ChkAutoReturn').prop("checked", false);
+        }
+        $('#ChkAutoReturn').on('change', $.proxy(handlerObject.toggleAutoReturn, handlerObject));
 
         $('#ProgressBar').progressbar();
         $('#BtnNextTest').button();
@@ -476,6 +504,27 @@ $.extend({ alert: function (message, title) {
         }
 
 
+    }
+
+    // ###################################################################
+    ListeningTest.prototype.setDefaults = function(config) {
+        var defaults = {
+          "ShowFileIDs": false,
+          "ShowResults": false,
+          "LoopByDefault": true,
+          "AutoReturnByDefault": true,
+          "EnableABLoop": true,
+          "EnableOnlineSubmission": false,
+          "BeaqleServiceURL": "",
+          "SupervisorContact": "",
+          "RandomizeTestOrder": false,
+          "MaxTestsPerRun": -1
+        }
+      
+        for (var property in defaults) {
+            if (config[property] === undefined)
+                config[property] = defaults[property];
+        }
     }
 
     // ###################################################################
@@ -723,9 +772,15 @@ $.extend({ alert: function (message, title) {
 
 
     // ###################################################################
-    // enable looping for all audios
+    // enable/disable looping for all audios
     ListeningTest.prototype.toggleLooping = function () {    
         this.audioPool.toggleLooped();
+    }
+    
+    // ###################################################################
+    // enable/disable auto return for all audios
+    ListeningTest.prototype.toggleAutoReturn = function () {    
+        this.audioPool.toggleAutoReturn();
     }
 
     // ###################################################################

@@ -131,6 +131,7 @@ The available options can be divided into a set of general options which apply t
 var TestConfig = {
   "TestName": "My Listening Test",   // <=  Name of the test
   "LoopByDefault": true,             // <=  Enable looped playback by default
+  "AutoReturnByDefault": true,       // <=  Always start playback from loop/track begin
   "ShowFileIDs": false,              // <=  Show file IDs for debugging (never
                                      //     enable this during real test!)
   "ShowResults": false,              // <=  Show table with test results at the end
@@ -181,6 +182,8 @@ Contrary to ABX tests the MUSHRA procedure allows more detailed evaluations as i
 "RateMinValue": 0,                    // <=  Minimum rating
 "RateMaxValue": 100,                  // <=  Maximum rating
 "RateDefaultValue":0,                 // <=  Default rating
+"RequireMaxRating": false,            // <=  At least one of the ratings in a testset
+                                      //     has to be at the maximum value
 "Testsets": [
   { "Name": "Schubert 1",             // <=  Name of the test set
     "TestID": "id1_1",                // <=  Unique test set ID, necessary for

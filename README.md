@@ -1,17 +1,17 @@
 
 Table of contents
 
-* [Description](#description)
-* [Basic Setup](#basic-setup)
-* [Test Configuration](#test-configuration)
-* [Browser Support](#browser-support)
-* [Online Submission](#online-submission)
-* [Internals](#internals)
-* [Contact](#contact)
-* [License](#license)
+1. [Description](#1-description)
+2. [Basic Setup](#2-basic-setup)
+3. [Test Configuration](#3-test-configuration)
+4. [Browser Support](#4-browser-support)
+5. [Online Submission](#5-online-submission)
+6. [Internals](#6-internals)
+7. [Contact](#7-contact)
+8. [License](#8-license)
 
 
-# Description #
+# 1. Description #
 
 BeaqleJS (**b**rowser based **e**valuation of **a**udio **q**uality and **c**omparative **l**istening **e**nvironment) provides a framework to create browser based listening tests and is purely based on open web standards like HTML5 and Javascript. Therefore, the test runs in any modern web browser and allows an easy distribution of the test environment to a significant amount of participants in combination with simple configuration. Currently it supports ABX and MUSHRA style test procedures but can be easily extended to other test schemes.
 
@@ -31,7 +31,7 @@ as a reference or link to our GitHub repository
 > https://github.com/HSU-ANT/beaqlejs
 
 
-# Basic Setup #
+# 2. Basic Setup #
 
 1. Download the test scripts
     - you can either get a stable release from  
@@ -65,13 +65,13 @@ as a reference or link to our GitHub repository
     Two example config files for the MUSHRA and ABX test class are already supplied in the `config/` folder to serve as a starting point. Detailed information about the different test classes and configuration can be found below.
 
 
-## Docker Webserver ##
+## 2.1 Docker Webserver ##
 
 Docker allows you to easily setup a webserver with PHP in order to run and test
 BeaqleJS locally on your computer.  More information about Docker can be
 found at `https://www.docker.com/`.
 
-### Manual Setup ###
+### 2.1.1 Manual Setup ###
 
 Create a container for the first time and mount your configured BeaqleJS folder
 into the container.
@@ -96,7 +96,7 @@ The current state of all available Docker containers can be investigated by
 
     $> docker ps -a
 
-### Docker Compose ###
+### 2.1.2 Docker Compose ###
 
 [Docker Compose](https://docs.docker.com/compose/install/) is a tool to run a server application from a simple configuration file. 
 
@@ -121,9 +121,9 @@ The status of the service can be inspected with:
     
     $> docker-compose ps 
 
-# Test Configuration #
+# 3. Test Configuration #
 
-## General Options ##
+## 3.1 General Options ##
 
 The available options can be divided into a set of general options which apply to all test classes and other options, including file declarations, that are specific for a single test class.
 
@@ -150,7 +150,7 @@ var TestConfig = {
 }
 ```
 
-## ABX ##
+## 3.2 ABX ##
 
 In an ABX test three items named A, B and X are presented to the listener, whereas X is randomly selected to be either the same as A or B. The listener has to identify which item is hidden behind X, or which one (A or B) is closest to X. If the listener is able to find the correct item, it reveals that there are perceptual differences between A and B.
 
@@ -171,7 +171,7 @@ A typical application of ABX tests would be the evaluation of the transparency o
 ]
 ```
 
-## MUSHRA ##
+## 3.3 MUSHRA ##
 
 In a MUSHRA test (ITU-R BS.1116-1) the listener gets presented an item marked as reference together with several anonymous test items. By using a slider for each test item he has to rate how close the items are to the reference on top. Among the test items there is usually also one hidden reference and one, or several, anchor signals to prove the validity of the ratings and the qualification of the participants.
 
@@ -203,11 +203,11 @@ Contrary to ABX tests the MUSHRA procedure allows more detailed evaluations as i
 ```
 
 
-# Browser Support #
+# 4. Browser Support #
 
 BeaqleJS in general will run well in any recent web browser out in the wild. The only noteworthy exceptions are the Internet Explorer versions below 9 which still have a market share of a few percent and unfortunately miss the required FileAPI. Participants will get a warning if they open the listening test with one of these old versions.
 
-## Required HTML5 Features ##
+## 4.1 Required HTML5 Features ##
 
 * Audio playback using HTML5 is widely supported by all major browsers since many years ([list browsers](http://caniuse.com/#feat=audio)).
 
@@ -217,19 +217,19 @@ Optionally:
 
 * WebAudioAPI is used in BeaqleJS for smooth fade in/out at start/stop of playback and at the loop borders. It is available in every major browser apart from the Internet Explorer ([list browsers](http://caniuse.com/#feat=audio-api)). Due to different bugs and inconsistencies in the WebAudioAPI, smooth fade in/out is not guaranteed to work equally well on all browsers. Best results were obtained with browsers based on the Chromium engine.
 
-## Codecs ##
+## 4.2 Codecs ##
 
 Although most browsers today support the HTML5 `<audio>` tag, the supported formats and codecs vary a lot. Unfortunately, support for lossless compression like FLAC has not yet reached a sufficient spread. The only lossless, but also uncompressed, format widely accepted is WAV PCM with 16 bit sample precision. Solely the Internet Explorer is not capable to play back this file type.
 
 The following table lists the minimum browser version required for different audio formats:
 
-Format     |  IE   |  Edge  | Firefox | Chrome |  Opera | Safari
------------|-------|--------|---------|--------|--------|--------
-WAV PCM    |  no   |   12   |   3.5   |   8    |  11.5  |   3.2
-FLAC       |  no   |   no   |   51    |   56   |   42   |   no
-Ogg Vorbis |  no   |   no   |   3.5   |   4    |  11.5  | XiphQT
-MP3        |  9.0  |   12   |   22    |   4    |   15   |   4
-ACC        |  9.0  |   12   |   22*   |   12   |   15   |   4
+Format     |  IE   |  Edge  | Firefox | Chrome |  Opera |   Safari
+-----------|-------|--------|---------|--------|--------|--------------
+WAV PCM    |  no   |   12   |   3.5   |   8    |  11.5  |     3.2
+FLAC       |  no   |   16   |   51    |   56   |   42   | 11, OSX > 10.13
+Ogg Vorbis |  no   |   17   |   3.5   |   4    |  11.5  |    XiphQT
+MP3        |  9.0  |   12   |   22    |   4    |   15   |      4
+ACC        |  9.0  |   12   |   22*   |   12   |   15   |      4
 
 (* not on all platforms, requires a pre-installed codec)
 
@@ -241,11 +241,11 @@ Source `canisue.com`:
    * [AAC](http://caniuse.com/#feat=aac)
 
 
-# Online Submission #
+# 5. Online Submission #
 
 BeaqleJS can send the test results in JSON format to a web service to collect them in a central place. An exemplary server side PHP script which can be used to receive and store the results is included in the `web_service/` subfolder. It only requires a webspace with PHP >= 5.6.
 
-## Setup ##
+## 5.1 Setup ##
 
 1. Upload the file `web_service/beaqleJS_Service.php` to a webserver. Create a folder named `results/` next to the PHP script and make sure that the webserver has write permissions on it.
 
@@ -253,7 +253,7 @@ BeaqleJS can send the test results in JSON format to a web service to collect th
 
 3. Enable online submission in the BeaqleJS config (`"EnableOnlineSubmission": true`) and set the `BeaqleServiceURL` to `http://yourdomain.com/mysubfolder/beaqleJS_Service.php`.
 
-## Security ##
+## 5.2 Security ##
 
 As with every public web service it is important to be aware about security aspects. In the current implementation there is no possibility to authenticate submitters, therefore everyone can potentially submit spoofed results if he is able to do some basic reverse engineering! However, this is also a common risk with every other public and open survey platform.
 
@@ -263,9 +263,11 @@ There are two provisions to avoid spamming of your sever:
 * File names in the `results/` folder contain a random string, so it is not possible to access the submitted data without listing the whole directory
 
 
-# Internals #
+# 6. Internals #
 
-The general structure of BeaqleJS can be divided in three blocks (Fig. 1). There is a common HTML5 `index.html` file to hold the main HTML structure with some basic place holder blocks whose content will be dynamically created by the JavaScript backend. The styling is completely independent and done with the help of cascading style sheets (CSS). Style sheets, config files and all necessary JavaScript libraries are loaded in the header of the `index.html`. Most of the descriptive text, like introduction and instructions, are placed in hidden blocks inside this file and their visibility is controlled by the scripts. For the user interface and to simplifiy Document Object Model (DOM) manipulations, the well known [jQuery](https://jquery.com/) and [jQueryUI](http://jqueryui.com/) libraries are used.
+![BeaqleJS functional blocks](https://s14.postimg.org/xozlybqdd/schematic.png)
+
+The general structure of BeaqleJS can be divided in three blocks as visualised in the diagram above. There is a common HTML5 `index.html` file to hold the main HTML structure with some basic place holder blocks whose content will be dynamically created by the JavaScript backend. The styling is completely independent and done with the help of cascading style sheets (CSS). Style sheets, config files and all necessary JavaScript libraries are loaded in the header of the `index.html`. Most of the descriptive text, like introduction and instructions, are placed in hidden blocks inside this file and their visibility is controlled by the scripts. For the user interface and to simplifiy Document Object Model (DOM) manipulations, the well known [jQuery](https://jquery.com/) and [jQueryUI](http://jqueryui.com/) libraries are used.
 
 The JavaScript backend consists of two main classes. The first one is the `AudioPool` which takes care of audio playback and buffering. It pools a set of HTML5 `<audio>`-tags in a certain AudioPool `<div>`-tag. There are simple functions to add and load a new file, connect  and address it with an ID, manage playback and looping as well as synchronized pause and stop operations.
 
@@ -275,7 +277,7 @@ To create a certain test type the abstract `ListeningTest` class is inherited an
 
 If the test is performed distributed over the internet or on several local computers, the `ListeningTest` main class is also able to send the final ratings to a web service for centralised collection and evaluation.
 
-## Creating a new test class ##
+## 6.1 Creating a new test class ##
 
 A new test class has to inherit the base functionality from the main `ListeningTest` class. Inheritance in JavaScript is achieved by prototypes and this means to define a new class `MyTest` and then set its prototype to the base class. As this overwrites the constructor it has to be reset to the child constructor afterwards:
 
@@ -349,14 +351,14 @@ Every new test class has to implement at least four new functions:
 * `formatResults(TestIdx)` is automatically called after the final test in the sequence. It is supposed to evaluate and summarize the ratings and to store the final results in `this.TestState.EvalResults`. It should return a string containing the results formatted in a human readable manner (HTML). This will be presented to the listener after the last test and the `EvalResults` structure may be send to a web service (see [Online Submission](#online-submission)).
 
 
-# Contact #
+# 7. Contact #
 
 <http://hsu-ant.github.io/beaqlejs>
 
 skraft (AT) hsu-hh.de
 
 
-# License #
+# 8. License #
 
 The complete sources, html and script files as well as images are released under the *GPLv3
 license*. A copy of the GPL is provided in the `LICENSE.txt` file.

@@ -1,3 +1,12 @@
+## BeaqleJS v0.3 ##
+
+* Add auto return option on switching items
+* New "Preference" test class (AB testing)
+* Many fixes to the WebAudioAPI-based fading, now working on most browsers
+* Cleanup and extend the docs
+* Validate user name in web service upload script
+
+
 ## BeaqleJS v0.2 ##
 
 * WebAudioAPI is used for smooth fade in/out with Chromium based browsers

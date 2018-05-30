@@ -265,7 +265,7 @@ There are two provisions to avoid spamming of your sever:
 
 # 6. Internals #
 
-![BeaqleJS functional blocks](https://s14.postimg.org/xozlybqdd/schematic.png)
+![BeaqleJS functional blocks](https://s14.postimg.cc/xozlybqdd/schematic.png)
 
 The general structure of BeaqleJS can be divided in three blocks as visualised in the diagram above. There is a common HTML5 `index.html` file to hold the main HTML structure with some basic place holder blocks whose content will be dynamically created by the JavaScript backend. The styling is completely independent and done with the help of cascading style sheets (CSS). Style sheets, config files and all necessary JavaScript libraries are loaded in the header of the `index.html`. Most of the descriptive text, like introduction and instructions, are placed in hidden blocks inside this file and their visibility is controlled by the scripts. For the user interface and to simplifiy Document Object Model (DOM) manipulations, the well known [jQuery](https://jquery.com/) and [jQueryUI](http://jqueryui.com/) libraries are used.
 

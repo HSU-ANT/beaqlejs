@@ -7,43 +7,64 @@
   <title></title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
+div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
 table.sourceCode { width: 100%; line-height: 100%; }
 td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
 td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
 </head>
 <body>
+<div id="header">
+<h1 class="title">BeaqleJS Documentation</h1>
+</div>
 <p>Table of contents</p>
-<ul>
-<li><a href="#description">Description</a></li>
-<li><a href="#basic-setup">Basic Setup</a></li>
-<li><a href="#test-configuration">Test Configuration</a></li>
-<li><a href="#browser-support">Browser Support</a></li>
-<li><a href="#online-submission">Online Submission</a></li>
-<li><a href="#internals">Internals</a></li>
-<li><a href="#contact">Contact</a></li>
-<li><a href="#license">License</a></li>
-</ul>
-<h1 id="description">Description</h1>
+<ol style="list-style-type: decimal">
+<li><a href="#1-description">Description</a></li>
+<li><a href="#2-basic-setup">Basic Setup</a></li>
+<li><a href="#3-test-configuration">Test Configuration</a></li>
+<li><a href="#4-browser-support">Browser Support</a></li>
+<li><a href="#5-online-submission">Online Submission</a></li>
+<li><a href="#6-internals">Internals</a></li>
+<li><a href="#7-contact">Contact</a></li>
+<li><a href="#8-license">License</a></li>
+</ol>
+<h1 id="description">1. Description</h1>
 <p>BeaqleJS (<strong>b</strong>rowser based <strong>e</strong>valuation of <strong>a</strong>udio <strong>q</strong>uality and <strong>c</strong>omparative <strong>l</strong>istening <strong>e</strong>nvironment) provides a framework to create browser based listening tests and is purely based on open web standards like HTML5 and Javascript. Therefore, the test runs in any modern web browser and allows an easy distribution of the test environment to a significant amount of participants in combination with simple configuration. Currently it supports ABX and MUSHRA style test procedures but can be easily extended to other test schemes.</p>
 <p>To get a better impression about its functionality there are two demo test sites for the ABX and MUSHRA test classes:</p>
 <ul>
-<li><a href="http://hsu-ant.github.io/beaqlejs/demo/abx/">http://hsu-ant.github.io/beaqlejs/demo/abx/</a></li>
-<li><a href="http://hsu-ant.github.io/beaqlejs/demo/mushra/">http://hsu-ant.github.io/beaqlejs/demo/mushra/</a></li>
+<li><a href="http://hsu-ant.github.io/beaqlejs/demo/abx/" class="uri">http://hsu-ant.github.io/beaqlejs/demo/abx/</a></li>
+<li><a href="http://hsu-ant.github.io/beaqlejs/demo/mushra/" class="uri">http://hsu-ant.github.io/beaqlejs/demo/mushra/</a></li>
 </ul>
 <p>BeaqleJS has been presented at the <a href="http://lac.linuxaudio.org/2014/">Linux Audio Conference 2014</a> at the ZKM in Karlsruhe, Germany. The original <a href="http://lac.linuxaudio.org/2014/papers/26.pdf">paper</a> and presentation <a href="http://lac.linuxaudio.org/2014/download/SKraft_BeaqleJS.pdf">slides</a> are available from the conference archive. However, meanwhile most of the paper content has been updated and merged into this documentation.</p>
 <p>If you want to cite BeaqleJS in a publication please use</p>
@@ -54,235 +75,274 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <blockquote>
 <p>https://github.com/HSU-ANT/beaqlejs</p>
 </blockquote>
-<h1 id="basic-setup">Basic Setup</h1>
+<h1 id="basic-setup">2. Basic Setup</h1>
 <ol style="list-style-type: decimal">
 <li>Download the test scripts
 <ul>
-<li>you can either get a stable release from<br /> <a href="https://github.com/HSU-ANT/beaqlejs/releases">https://github.com/HSU-ANT/beaqlejs/releases</a></li>
-<li>or clone the git repository<br /> <code>git clone https://github.com/HSU-ANT/beaqlejs.git</code></li>
-<li>or simply download a zip of the current HEAD revision at<br /> <a href="https://github.com/HSU-ANT/beaqlejs/archive/master.zip">https://github.com/HSU-ANT/beaqlejs/archive/master.zip</a></li>
+<li>you can either get a stable release from<br />
+<a href="https://github.com/HSU-ANT/beaqlejs/releases" class="uri">https://github.com/HSU-ANT/beaqlejs/releases</a></li>
+<li>or clone the git repository<br />
+<code>git clone https://github.com/HSU-ANT/beaqlejs.git</code></li>
+<li>or simply download a zip of the current HEAD revision at<br />
+<a href="https://github.com/HSU-ANT/beaqlejs/archive/master.zip" class="uri">https://github.com/HSU-ANT/beaqlejs/archive/master.zip</a></li>
 </ul></li>
 <li><p>Uncomment the line where the desired test class is initialized and loaded in the header of the <code>index.html</code> file.</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="kw">&gt;</span>
-  <span class="kw">var</span> testHandle;
-  <span class="ot">window</span>.<span class="fu">onload</span>=<span class="kw">function</span>() {
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;script</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">var</span> testHandle<span class="op">;</span>
+  <span class="va">window</span>.<span class="at">onload</span><span class="op">=</span><span class="kw">function</span>() <span class="op">{</span>
     <span class="co">// Uncomment one of the following lines to choose the desired test class</span>
     <span class="co">//testHandle = new MushraTest(TestConfig);  // &lt;= MUSHRA test class</span>
     <span class="co">//testHandle = new AbxTest(TestConfig);     // &lt;= ABX test class</span>
-  };
-&lt;<span class="ot">/script&gt;</span></code></pre></li>
+  <span class="op">};</span>
+<span class="op">&lt;</span><span class="ss">/script&gt;</span></code></pre></div></li>
 <li><p>Prepare a config file and set its path in the prepared <code>&lt;script&gt;&lt;/script&gt;</code> tag in the header of the <code>index.html</code> file.</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="co">&lt;!-- load the test config file --&gt;</span>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="co">&lt;!-- load the test config file --&gt;</span>
   <span class="kw">&lt;script</span><span class="ot"> src=</span><span class="st">&quot;config/YOUR_CONFIG.js&quot;</span><span class="ot"> type=</span><span class="st">&quot;text/javascript&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
-<span class="co">&lt;!----&gt;</span></code></pre>
+<span class="co">&lt;!----&gt;</span></code></pre></div>
 <p>Two example config files for the MUSHRA and ABX test class are already supplied in the <code>config/</code> folder to serve as a starting point. Detailed information about the different test classes and configuration can be found below.</p></li>
 </ol>
-<h2 id="docker-webserver">Docker Webserver</h2>
+<h2 id="docker-webserver">2.1 Docker Webserver</h2>
 <p>Docker allows you to easily setup a webserver with PHP in order to run and test BeaqleJS locally on your computer. More information about Docker can be found at <code>https://www.docker.com/</code>.</p>
-<h3 id="setup">Setup</h3>
+<h3 id="manual-setup">2.1.1 Manual Setup</h3>
 <p>Create a container for the first time and mount your configured BeaqleJS folder into the container.</p>
-<pre><code>docker run -d -p 80:80 -v /path/to/BeaqleJS:/var/www/html --name beaqlejs-server php:7.0-apache</code></pre>
+<pre><code>$&gt; docker run -d -p 80:80 -v /path/to/BeaqleJS:/var/www/html --name beaqlejs-server php:7.0-apache</code></pre>
 <p>You can then access BeaqleJS at <code>http://localhost/</code>.</p>
 <p>Please note that this runs a public webserver on your machine which is accessible by everyone in your local network. Therefore, it is advised to stop the Docker container when it is not needed anymore.</p>
 <p>You can stop the Docker container by</p>
-<pre><code>docker stop beaqlejs-server</code></pre>
+<pre><code>$&gt; docker stop beaqlejs-server</code></pre>
 <p>and restart it again with</p>
-<pre><code>docker start beaqlejs-server</code></pre>
+<pre><code>$&gt; docker start beaqlejs-server</code></pre>
 <p>The current state of all available Docker containers can be investigated by</p>
-<pre><code>docker ps -a</code></pre>
-<h1 id="test-configuration">Test Configuration</h1>
-<h2 id="general-options">General Options</h2>
+<pre><code>$&gt; docker ps -a</code></pre>
+<h3 id="docker-compose">2.1.2 Docker Compose</h3>
+<p><a href="https://docs.docker.com/compose/install/">Docker Compose</a> is a tool to run a server application from a simple configuration file.</p>
+<p>Go to the directory with the <code>docker-compose.yml</code> file in the BeaqleJS file tree:</p>
+<pre><code>$&gt; cd tools/Docker/</code></pre>
+<p>Create a container for the first time and initialize it:</p>
+<pre><code>$&gt; docker-compose up</code></pre>
+<p>Start and stop an existing service:</p>
+<pre><code>$&gt; docker-compose start
+$&gt; docker-compose stop</code></pre>
+<p>Completely remove the service:</p>
+<pre><code>$&gt; docker-compose down</code></pre>
+<p>The status of the service can be inspected with:</p>
+<pre><code>$&gt; docker-compose ps </code></pre>
+<h1 id="test-configuration">3. Test Configuration</h1>
+<h2 id="general-options">3.1 General Options</h2>
 <p>The available options can be divided into a set of general options which apply to all test classes and other options, including file declarations, that are specific for a single test class.</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> TestConfig = {
-  <span class="st">&quot;TestName&quot;</span>: <span class="st">&quot;My Listening Test&quot;</span>,   <span class="co">// &lt;=  Name of the test</span>
-  <span class="st">&quot;LoopByDefault&quot;</span>: <span class="kw">true</span>,             <span class="co">// &lt;=  Enable looped playback by default</span>
-  <span class="st">&quot;ShowFileIDs&quot;</span>: <span class="kw">false</span>,              <span class="co">// &lt;=  Show file IDs for debugging (never</span>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> TestConfig <span class="op">=</span> <span class="op">{</span>
+  <span class="st">&quot;TestName&quot;</span><span class="op">:</span> <span class="st">&quot;My Listening Test&quot;</span><span class="op">,</span>   <span class="co">// &lt;=  Name of the test</span>
+  <span class="st">&quot;LoopByDefault&quot;</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>             <span class="co">// &lt;=  Enable looped playback by default</span>
+  <span class="st">&quot;AutoReturnByDefault&quot;</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>       <span class="co">// &lt;=  Always start playback from loop/track begin</span>
+  <span class="st">&quot;ShowFileIDs&quot;</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span>              <span class="co">// &lt;=  Show file IDs for debugging (never</span>
                                      <span class="co">//     enable this during real test!)</span>
-  <span class="st">&quot;ShowResults&quot;</span>: <span class="kw">false</span>,              <span class="co">// &lt;=  Show table with test results at the end</span>
-  <span class="st">&quot;EnableABLoop&quot;</span>: <span class="kw">true</span>,              <span class="co">// &lt;=  Show controls to loop playback with an</span>
+  <span class="st">&quot;ShowResults&quot;</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span>              <span class="co">// &lt;=  Show table with test results at the end</span>
+  <span class="st">&quot;EnableABLoop&quot;</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>              <span class="co">// &lt;=  Show controls to loop playback with an</span>
                                      <span class="co">//     AB range slider</span>
-  <span class="st">&quot;EnableOnlineSubmission&quot;</span>: <span class="kw">false</span>,   <span class="co">// &lt;=  Enable transmission of JSON encoded</span>
+  <span class="st">&quot;EnableOnlineSubmission&quot;</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span>   <span class="co">// &lt;=  Enable transmission of JSON encoded</span>
                                      <span class="co">//     results to a web service</span>
-  <span class="st">&quot;BeaqleServiceURL&quot;</span>: <span class="st">&quot;&quot;</span>,            <span class="co">// &lt;=  URL of the web service</span>
-  <span class="st">&quot;SupervisorContact&quot;</span>: <span class="st">&quot;&quot;</span>,           <span class="co">// &lt;=  Email address of supervisor to contact for</span>
+  <span class="st">&quot;BeaqleServiceURL&quot;</span><span class="op">:</span> <span class="st">&quot;&quot;</span><span class="op">,</span>            <span class="co">// &lt;=  URL of the web service</span>
+  <span class="st">&quot;SupervisorContact&quot;</span><span class="op">:</span> <span class="st">&quot;&quot;</span><span class="op">,</span>           <span class="co">// &lt;=  Email address of supervisor to contact for</span>
                                      <span class="co">//     help or for submission of results by email</span>
-  <span class="st">&quot;RandomizeTestOrder&quot;</span>: <span class="kw">true</span>,        <span class="co">// &lt;=  Present test sets in a random order</span>
-  <span class="st">&quot;MaxTestsPerRun&quot;</span>: -<span class="dv">1</span>,              <span class="co">// &lt;=  Only run a random subset of all available</span>
+  <span class="st">&quot;RandomizeTestOrder&quot;</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>        <span class="co">// &lt;=  Present test sets in a random order</span>
+  <span class="st">&quot;MaxTestsPerRun&quot;</span><span class="op">:</span> <span class="op">-</span><span class="dv">1</span><span class="op">,</span>              <span class="co">// &lt;=  Only run a random subset of all available</span>
                                      <span class="co">//     tests, set to -1 to disable</span>
-  <span class="st">&quot;Testsets&quot;</span>: [ {...}, {...}, ... ], <span class="co">// &lt;=  Definition of test sets and files, more</span>
+  <span class="st">&quot;Testsets&quot;</span><span class="op">:</span> [ <span class="op">{</span>...<span class="op">},</span> <span class="op">{</span>...<span class="op">},</span> ... ]<span class="op">,</span> <span class="co">// &lt;=  Definition of test sets and files, more</span>
                                      <span class="co">//     details below</span>
-}</code></pre>
-<h2 id="abx">ABX</h2>
+<span class="op">}</span></code></pre></div>
+<h2 id="abx">3.2 ABX</h2>
 <p>In an ABX test three items named A, B and X are presented to the listener, whereas X is randomly selected to be either the same as A or B. The listener has to identify which item is hidden behind X, or which one (A or B) is closest to X. If the listener is able to find the correct item, it reveals that there are perceptual differences between A and B.</p>
 <p>A typical application of ABX tests would be the evaluation of the transparency of audio codecs. For example item A could be an unencoded audio snippet and B is the same snippet but encoded with a lossy codec. When the listener is not able to identify if A or B was hidden in X (results are randomly distributed), one can assume that the audio coding was transparent</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">...                                  <span class="co">// &lt;=  General options</span>
-<span class="st">&quot;Testsets&quot;</span>: [
-  { <span class="st">&quot;Name&quot;</span>: <span class="st">&quot;Schubert&quot;</span>,              <span class="co">// &lt;=  Name of the test set</span>
-    <span class="st">&quot;TestID&quot;</span>: <span class="st">&quot;id1_1&quot;</span>,               <span class="co">// &lt;=  Unique test set ID, necessary for internal</span>
-    <span class="st">&quot;Files&quot;</span>: {                       <span class="co">// &lt;=  Array with test files</span>
-      <span class="st">&quot;A&quot;</span>: <span class="st">&quot;audio/schubert_ref.wav&quot;</span>, <span class="co">// &lt;=  File A</span>
-      <span class="st">&quot;B&quot;</span>: <span class="st">&quot;audio/schubert_2.wav&quot;</span>,   <span class="co">// &lt;=  File B</span>
-      }
-  },
-  { ... },                           <span class="co">// &lt;=  Next test set starts here</span>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript">...                                  <span class="co">// &lt;=  General options</span>
+<span class="st">&quot;Testsets&quot;</span><span class="op">:</span> [
+  <span class="op">{</span> <span class="st">&quot;Name&quot;</span><span class="op">:</span> <span class="st">&quot;Schubert&quot;</span><span class="op">,</span>              <span class="co">// &lt;=  Name of the test set</span>
+    <span class="st">&quot;TestID&quot;</span><span class="op">:</span> <span class="st">&quot;id1_1&quot;</span><span class="op">,</span>               <span class="co">// &lt;=  Unique test set ID, necessary for internal</span>
+    <span class="st">&quot;Files&quot;</span><span class="op">:</span> <span class="op">{</span>                       <span class="co">// &lt;=  Array with test files</span>
+      <span class="st">&quot;A&quot;</span><span class="op">:</span> <span class="st">&quot;audio/schubert_ref.wav&quot;</span><span class="op">,</span> <span class="co">// &lt;=  File A</span>
+      <span class="st">&quot;B&quot;</span><span class="op">:</span> <span class="st">&quot;audio/schubert_2.wav&quot;</span><span class="op">,</span>   <span class="co">// &lt;=  File B</span>
+      <span class="op">}</span>
+  <span class="op">},</span>
+  <span class="op">{</span> ... <span class="op">},</span>                           <span class="co">// &lt;=  Next test set starts here</span>
   ....
-]</code></pre>
-<h2 id="mushra">MUSHRA</h2>
+]</code></pre></div>
+<h2 id="mushra">3.3 MUSHRA</h2>
 <p>In a MUSHRA test (ITU-R BS.1116-1) the listener gets presented an item marked as reference together with several anonymous test items. By using a slider for each test item he has to rate how close the items are to the reference on top. Among the test items there is usually also one hidden reference and one, or several, anchor signals to prove the validity of the ratings and the qualification of the participants.</p>
 <p>Contrary to ABX tests the MUSHRA procedure allows more detailed evaluations as it is possible to compare more than one algorithm to a reference. Furthermore, the results are on a continuous scale allowing a direct numerical comparison of all algorithms under test.</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript">...                                   <span class="co">// &lt;=  General options</span>
-<span class="st">&quot;RateMinValue&quot;</span>: <span class="dv">0</span>,                    <span class="co">// &lt;=  Minimum rating</span>
-<span class="st">&quot;RateMaxValue&quot;</span>: <span class="dv">100</span>,                  <span class="co">// &lt;=  Maximum rating</span>
-<span class="st">&quot;RateDefaultValue&quot;</span>:<span class="dv">0</span>,                 <span class="co">// &lt;=  Default rating</span>
-<span class="st">&quot;Testsets&quot;</span>: [
-  { <span class="st">&quot;Name&quot;</span>: <span class="st">&quot;Schubert 1&quot;</span>,             <span class="co">// &lt;=  Name of the test set</span>
-    <span class="st">&quot;TestID&quot;</span>: <span class="st">&quot;id1_1&quot;</span>,                <span class="co">// &lt;=  Unique test set ID, necessary for</span>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript">...                                   <span class="co">// &lt;=  General options</span>
+<span class="st">&quot;RateMinValue&quot;</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span>                    <span class="co">// &lt;=  Minimum rating</span>
+<span class="st">&quot;RateMaxValue&quot;</span><span class="op">:</span> <span class="dv">100</span><span class="op">,</span>                  <span class="co">// &lt;=  Maximum rating</span>
+<span class="st">&quot;RateDefaultValue&quot;</span><span class="op">:</span><span class="dv">0</span><span class="op">,</span>                 <span class="co">// &lt;=  Default rating</span>
+<span class="st">&quot;RequireMaxRating&quot;</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span>            <span class="co">// &lt;=  At least one of the ratings in a testset</span>
+                                      <span class="co">//     has to be at the maximum value</span>
+<span class="st">&quot;Testsets&quot;</span><span class="op">:</span> [
+  <span class="op">{</span> <span class="st">&quot;Name&quot;</span><span class="op">:</span> <span class="st">&quot;Schubert 1&quot;</span><span class="op">,</span>             <span class="co">// &lt;=  Name of the test set</span>
+    <span class="st">&quot;TestID&quot;</span><span class="op">:</span> <span class="st">&quot;id1_1&quot;</span><span class="op">,</span>                <span class="co">// &lt;=  Unique test set ID, necessary for</span>
                                       <span class="co">//     internal referencing</span>
-    <span class="st">&quot;Files&quot;</span>: {                        <span class="co">// &lt;=  Array with test files</span>
-      <span class="st">&quot;Reference&quot;</span>: <span class="st">&quot;audio/ref.wav&quot;</span>,   <span class="co">// &lt;=  Every MUSHRA test set needs exactly</span>
+    <span class="st">&quot;Files&quot;</span><span class="op">:</span> <span class="op">{</span>                        <span class="co">// &lt;=  Array with test files</span>
+      <span class="st">&quot;Reference&quot;</span><span class="op">:</span> <span class="st">&quot;audio/ref.wav&quot;</span><span class="op">,</span>   <span class="co">// &lt;=  Every MUSHRA test set needs exactly</span>
                                       <span class="co">//     one(!) file with a &quot;Reference&quot; label</span>
-      <span class="st">&quot;label_1&quot;</span>: <span class="st">&quot;audio/algo_1.wav&quot;</span>,  <span class="co">// &lt;=  Various files to be tested, the labels</span>
-      <span class="st">&quot;label_2&quot;</span>: <span class="st">&quot;audio/algo_2.wav&quot;</span>,  <span class="co">//     can be freely chosen as desired but</span>
-      <span class="st">&quot;label_3&quot;</span>: <span class="st">&quot;audio/algo_3.wav&quot;</span>,  <span class="co">//     have to be unique inside a test set</span>
-      <span class="st">&quot;anchor&quot;</span>: <span class="st">&quot;audio/algo_anc.wav&quot;</span>, <span class="co">//      ...</span>
-      }
-  },
-  { ... },                            <span class="co">// &lt;=  Next test set starts here</span>
+      <span class="st">&quot;label_1&quot;</span><span class="op">:</span> <span class="st">&quot;audio/algo_1.wav&quot;</span><span class="op">,</span>  <span class="co">// &lt;=  Various files to be tested, the labels</span>
+      <span class="st">&quot;label_2&quot;</span><span class="op">:</span> <span class="st">&quot;audio/algo_2.wav&quot;</span><span class="op">,</span>  <span class="co">//     can be freely chosen as desired but</span>
+      <span class="st">&quot;label_3&quot;</span><span class="op">:</span> <span class="st">&quot;audio/algo_3.wav&quot;</span><span class="op">,</span>  <span class="co">//     have to be unique inside a test set</span>
+      <span class="st">&quot;anchor&quot;</span><span class="op">:</span> <span class="st">&quot;audio/algo_anc.wav&quot;</span><span class="op">,</span> <span class="co">//      ...</span>
+      <span class="op">}</span>
+  <span class="op">},</span>
+  <span class="op">{</span> ... <span class="op">},</span>                            <span class="co">// &lt;=  Next test set starts here</span>
   ....
-]</code></pre>
-<h1 id="browser-support">Browser Support</h1>
+]</code></pre></div>
+<h1 id="browser-support">4. Browser Support</h1>
 <p>BeaqleJS in general will run well in any recent web browser out in the wild. The only noteworthy exceptions are the Internet Explorer versions below 9 which still have a market share of a few percent and unfortunately miss the required FileAPI. Participants will get a warning if they open the listening test with one of these old versions.</p>
-<h2 id="required-html5-features">Required HTML5 Features</h2>
+<h2 id="required-html5-features">4.1 Required HTML5 Features</h2>
 <ul>
-<li><p>Audio playback using HTML5 is widely supported by all major browsers since many years (except IE below version 9.0). (<a href="http://caniuse.com/#feat=audio">list browsers</a>)</p></li>
-<li><p>FileAPI-Blob is necessary to provide the listening test results as a virtual download to be saved on the local harddisk. This API can be expected to be available in every browser of the last years (except IE below version 9.0). (<a href="http://caniuse.com/#feat=blobbuilder">list browsers</a>)</p></li>
+<li><p>Audio playback using HTML5 is widely supported by all major browsers since many years (<a href="http://caniuse.com/#feat=audio">list browsers</a>).</p></li>
+<li><p>FileAPI-Blob is necessary to provide the listening test results as a virtual download to be saved on the local harddisk. This API can be expected to be available in every browser released in the last years (<a href="http://caniuse.com/#feat=blobbuilder">list browsers</a>).</p></li>
 </ul>
 <p>Optionally:</p>
 <ul>
-<li>WebAudioAPI is used in BeaqleJS for smooth fade in/out at start/stop of playback and at the loop borders. It currently only works reliably with browsers based on the Chromium engine, although it is available in every major browser apart from the Internet Explorer. (<a href="http://caniuse.com/#feat=audio-api">list browsers</a>)</li>
+<li>WebAudioAPI is used in BeaqleJS for smooth fade in/out at start/stop of playback and at the loop borders. It is available in every major browser apart from the Internet Explorer (<a href="http://caniuse.com/#feat=audio-api">list browsers</a>). Due to different bugs and inconsistencies in the WebAudioAPI, smooth fade in/out is not guaranteed to work equally well on all browsers. Best results were obtained with browsers based on the Chromium engine.</li>
 </ul>
-<h2 id="codecs">Codecs</h2>
-<p>Although most browsers today support the HTML5 <code>&lt;audio&gt;</code> tag, the supported formats and codecs vary a lot. Unfortunately no browser directly supports FLAC or other lossless compression so far. The only lossless, but also uncompressed, format widely accepted is WAV PCM with 16 bit sample precision. Solely the Internet Explorer is not capable to play back this file type.</p>
+<h2 id="codecs">4.2 Codecs</h2>
+<p>Although most browsers today support the HTML5 <code>&lt;audio&gt;</code> tag, the supported formats and codecs vary a lot. Unfortunately, support for lossless compression like FLAC has not yet reached a sufficient spread. The only lossless, but also uncompressed, format widely accepted is WAV PCM with 16 bit sample precision. Solely the Internet Explorer is not capable to play back this file type.</p>
+<p>The following table lists the minimum browser version required for different audio formats:</p>
 <table>
 <thead>
 <tr class="header">
-<th align="left">Format</th>
-<th align="left">IE</th>
-<th align="left">Firefox</th>
-<th align="left">Chrome</th>
-<th align="left">Opera</th>
-<th align="left">Safari</th>
+<th>Format</th>
+<th>IE</th>
+<th>Edge</th>
+<th>Firefox</th>
+<th>Chrome</th>
+<th>Opera</th>
+<th>Safari</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">WAV PCM</td>
-<td align="left">no</td>
-<td align="left">&gt; 3.5</td>
-<td align="left">yes</td>
-<td align="left">&gt; 11.0</td>
-<td align="left">&gt; 3.1</td>
+<td>WAV PCM</td>
+<td>no</td>
+<td>12</td>
+<td>3.5</td>
+<td>8</td>
+<td>11.5</td>
+<td>3.2</td>
 </tr>
 <tr class="even">
-<td align="left">Ogg Vorbis</td>
-<td align="left">no</td>
-<td align="left">&gt; 3.5</td>
-<td align="left">yes</td>
-<td align="left">&gt; 10.5</td>
-<td align="left">XiphQT</td>
+<td>FLAC</td>
+<td>no</td>
+<td>16</td>
+<td>51</td>
+<td>56</td>
+<td>42</td>
+<td>11, OSX &gt; 10.13</td>
 </tr>
 <tr class="odd">
-<td align="left">MP3</td>
-<td align="left">&gt; 9.0</td>
-<td align="left">&gt; 26*</td>
-<td align="left">yes</td>
-<td align="left">&gt; 14</td>
-<td align="left">&gt; 3.1</td>
+<td>Ogg Vorbis</td>
+<td>no</td>
+<td>17</td>
+<td>3.5</td>
+<td>4</td>
+<td>11.5</td>
+<td>XiphQT</td>
 </tr>
 <tr class="even">
-<td align="left">ACC</td>
-<td align="left">&gt; 9.0</td>
-<td align="left">&gt; 26*</td>
-<td align="left">yes</td>
-<td align="left">&gt; 14</td>
-<td align="left">&gt; 3.1</td>
+<td>MP3</td>
+<td>9.0</td>
+<td>12</td>
+<td>22</td>
+<td>4</td>
+<td>15</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>ACC</td>
+<td>9.0</td>
+<td>12</td>
+<td>22*</td>
+<td>12</td>
+<td>15</td>
+<td>4</td>
 </tr>
 </tbody>
 </table>
-<p>(* not on Mac OS X)</p>
-<h1 id="online-submission">Online Submission</h1>
+<p>(* not on all platforms, requires a pre-installed codec)</p>
+<p>Source <code>canisue.com</code>: * <a href="http://caniuse.com/#feat=wav">WAV PCM</a> * <a href="http://caniuse.com/#feat=flac">FLAC</a> * <a href="http://caniuse.com/#feat=ogg-vorbis">Ogg Vorbis</a> * <a href="http://caniuse.com/#feat=mp3">MP3</a> * <a href="http://caniuse.com/#feat=aac">AAC</a></p>
+<h1 id="online-submission">5. Online Submission</h1>
 <p>BeaqleJS can send the test results in JSON format to a web service to collect them in a central place. An exemplary server side PHP script which can be used to receive and store the results is included in the <code>web_service/</code> subfolder. It only requires a webspace with PHP &gt;= 5.6.</p>
-<h2 id="setup-1">Setup</h2>
+<h2 id="setup">5.1 Setup</h2>
 <ol style="list-style-type: decimal">
 <li><p>Upload the file <code>web_service/beaqleJS_Service.php</code> to a webserver. Create a folder named <code>results/</code> next to the PHP script and make sure that the webserver has write permissions on it.</p></li>
 <li><p>Try to execute the script in your browser. For example, point your browser to <code>http://yourdomain.com/mysubfolder/beaqleJS_Service.php</code>. The script performs a self-test and checks PHP version and write permission of the <code>results/</code> folder.</p></li>
 <li><p>Enable online submission in the BeaqleJS config (<code>&quot;EnableOnlineSubmission&quot;: true</code>) and set the <code>BeaqleServiceURL</code> to <code>http://yourdomain.com/mysubfolder/beaqleJS_Service.php</code>.</p></li>
 </ol>
-<h2 id="security">Security</h2>
+<h2 id="security">5.2 Security</h2>
 <p>As with every public web service it is important to be aware about security aspects. In the current implementation there is no possibility to authenticate submitters, therefore everyone can potentially submit spoofed results if he is able to do some basic reverse engineering! However, this is also a common risk with every other public and open survey platform.</p>
 <p>There are two provisions to avoid spamming of your sever:</p>
 <ul>
 <li>The results JSON object is limited to a size of 64kB which is a lot for listening test results, but not enough to abuse your server as a hosting facility</li>
 <li>File names in the <code>results/</code> folder contain a random string, so it is not possible to access the submitted data without listing the whole directory</li>
 </ul>
-<h1 id="internals">Internals</h1>
-<p>The general structure of BeaqleJS can be divided in three blocks (Fig. 1). There is a common HTML5 <code>index.html</code> file to hold the main HTML structure with some basic place holder blocks whose content will be dynamically created by the JavaScript backend. The styling is completely independent and done with the help of cascading style sheets (CSS). Style sheets, config files and all necessary JavaScript libraries are loaded in the header of the <code>index.html</code>. Most of the descriptive text, like introduction and instructions, are placed in hidden blocks inside this file and their visibility is controlled by the scripts. For the user interface and to simplifiy Document Object Model (DOM) manipulations, the well known <a href="https://jquery.com/">jQuery</a> and <a href="http://jqueryui.com/">jQueryUI</a> libraries are used.</p>
+<h1 id="internals">6. Internals</h1>
+<div class="figure">
+<img src="https://s14.postimg.cc/xozlybqdd/schematic.png" alt="BeaqleJS functional blocks" />
+<p class="caption">BeaqleJS functional blocks</p>
+</div>
+<p>The general structure of BeaqleJS can be divided in three blocks as visualised in the diagram above. There is a common HTML5 <code>index.html</code> file to hold the main HTML structure with some basic place holder blocks whose content will be dynamically created by the JavaScript backend. The styling is completely independent and done with the help of cascading style sheets (CSS). Style sheets, config files and all necessary JavaScript libraries are loaded in the header of the <code>index.html</code>. Most of the descriptive text, like introduction and instructions, are placed in hidden blocks inside this file and their visibility is controlled by the scripts. For the user interface and to simplifiy Document Object Model (DOM) manipulations, the well known <a href="https://jquery.com/">jQuery</a> and <a href="http://jqueryui.com/">jQueryUI</a> libraries are used.</p>
 <p>The JavaScript backend consists of two main classes. The first one is the <code>AudioPool</code> which takes care of audio playback and buffering. It pools a set of HTML5 <code>&lt;audio&gt;</code>-tags in a certain AudioPool <code>&lt;div&gt;</code>-tag. There are simple functions to add and load a new file, connect and address it with an ID, manage playback and looping as well as synchronized pause and stop operations.</p>
 <p>The <code>ListeningTest</code> class provides the main functions of an abstract listening test. This includes the setup and management of basic playback controls (play, pause, looping, time line display, ...), reading of the test configuration as well as storage of the results and also main control over the test sequence.</p>
 <p>To create a certain test type the abstract <code>ListeningTest</code> class is inherited and specific functions for the actual arrangement of test items or storage and evaluation of the results need to be implemented. Based on this modular approach it is very easy to extend the framework with additional test types or to create variants of existing ones without the need to reimplement all the necessary basics.</p>
 <p>If the test is performed distributed over the internet or on several local computers, the <code>ListeningTest</code> main class is also able to send the final ratings to a web service for centralised collection and evaluation.</p>
-<h2 id="creating-a-new-test-class">Creating a new test class</h2>
+<h2 id="creating-a-new-test-class">6.1 Creating a new test class</h2>
 <p>A new test class has to inherit the base functionality from the main <code>ListeningTest</code> class. Inheritance in JavaScript is achieved by prototypes and this means to define a new class <code>MyTest</code> and then set its prototype to the base class. As this overwrites the constructor it has to be reset to the child constructor afterwards:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// inherit from ListeningTest</span>
-<span class="kw">function</span> <span class="fu">MyTest</span>(TestData) {
-  <span class="ot">ListeningTest</span>.<span class="fu">apply</span>(<span class="kw">this</span>, arguments);
-}
-<span class="ot">MyTest</span>.<span class="fu">prototype</span> = <span class="kw">new</span> <span class="fu">ListeningTest</span>();
-<span class="ot">MyTest</span>.<span class="ot">prototype</span>.<span class="fu">constructor</span> = MyTest;
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// inherit from ListeningTest</span>
+<span class="kw">function</span> <span class="at">MyTest</span>(TestData) <span class="op">{</span>
+  <span class="va">ListeningTest</span>.<span class="at">apply</span>(<span class="kw">this</span><span class="op">,</span> arguments)<span class="op">;</span>
+<span class="op">}</span>
+<span class="va">MyTest</span>.<span class="at">prototype</span> <span class="op">=</span> <span class="kw">new</span> <span class="at">ListeningTest</span>()<span class="op">;</span>
+<span class="va">MyTest</span>.<span class="va">prototype</span>.<span class="at">constructor</span> <span class="op">=</span> MyTest<span class="op">;</span>
 
 <span class="co">// implement the necessary functions</span>
-<span class="ot">MyTest</span>.<span class="ot">prototype</span>.<span class="fu">createTestDOM</span> = ...
-<span class="ot">MyTest</span>.<span class="ot">prototype</span>.<span class="fu">saveRatings</span>   = ...
-<span class="ot">MyTest</span>.<span class="ot">prototype</span>.<span class="fu">readRatings</span>   = ...
-<span class="ot">MyTest</span>.<span class="ot">prototype</span>.<span class="fu">formatResults</span> = ...</code></pre>
+<span class="va">MyTest</span>.<span class="va">prototype</span>.<span class="at">createTestDOM</span> <span class="op">=</span> ...
+<span class="va">MyTest</span>.<span class="va">prototype</span>.<span class="at">saveRatings</span>   <span class="op">=</span> ...
+<span class="va">MyTest</span>.<span class="va">prototype</span>.<span class="at">readRatings</span>   <span class="op">=</span> ...
+<span class="va">MyTest</span>.<span class="va">prototype</span>.<span class="at">formatResults</span> <span class="op">=</span> ...</code></pre></div>
 <p>The child class can access the <code>TestState</code> and the <code>TestConfig</code> structures from the parent:</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="ot">ListeningTest</span>.<span class="fu">TestState</span> = {
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">ListeningTest</span>.<span class="at">TestState</span> <span class="op">=</span> <span class="op">{</span>
     <span class="co">// main public members</span>
-    <span class="st">&#39;CurrentTest&#39;</span>: -<span class="dv">1</span>,
-    <span class="st">&#39;TestIsRunning&#39;</span>: <span class="kw">false</span>,
-    <span class="st">&#39;FileMappings&#39;</span>: {},
-    <span class="st">&#39;Ratings&#39;</span>: {},
-    <span class="st">&#39;EvalResults&#39;</span>: {},
+    <span class="st">&#39;CurrentTest&#39;</span><span class="op">:</span> <span class="op">-</span><span class="dv">1</span><span class="op">,</span>
+    <span class="st">&#39;TestIsRunning&#39;</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span>
+    <span class="st">&#39;FileMappings&#39;</span><span class="op">:</span> <span class="op">{},</span>
+    <span class="st">&#39;Ratings&#39;</span><span class="op">:</span> <span class="op">{},</span>
+    <span class="st">&#39;EvalResults&#39;</span><span class="op">:</span> <span class="op">{},</span>
     <span class="co">// ...</span>
     <span class="co">// optionally add own fields</span>
     <span class="co">// ...</span>
-}
+<span class="op">}</span>
 
-<span class="ot">ListeningTest</span>.<span class="fu">TestConfig</span> = {
-    <span class="st">&quot;TestName&quot;</span>: <span class="st">&quot;Test&quot;</span>,
-    <span class="st">&quot;LoopByDefault&quot;</span>: <span class="kw">true</span>,
-    <span class="st">&quot;EnableABLoop&quot;</span>: <span class="kw">true</span>,
-    <span class="st">&quot;EnableOnlineSubmission&quot;</span>: <span class="kw">false</span>,
-    <span class="st">&quot;BeaqleServiceURL&quot;</span>: <span class="st">&quot;http://...&quot;</span>,
-    <span class="st">&quot;SupervisorContact&quot;</span>: <span class="st">&quot;super@visor.com&quot;</span>,
-    <span class="st">&quot;Testsets&quot;</span>: [
-        {
-            <span class="st">&quot;Name&quot;</span>: <span class="st">&quot;Testset 1&quot;</span>,
-            <span class="st">&quot;Files&quot;</span>: {
+<span class="va">ListeningTest</span>.<span class="at">TestConfig</span> <span class="op">=</span> <span class="op">{</span>
+    <span class="st">&quot;TestName&quot;</span><span class="op">:</span> <span class="st">&quot;Test&quot;</span><span class="op">,</span>
+    <span class="st">&quot;LoopByDefault&quot;</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>
+    <span class="st">&quot;EnableABLoop&quot;</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>
+    <span class="st">&quot;EnableOnlineSubmission&quot;</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span>
+    <span class="st">&quot;BeaqleServiceURL&quot;</span><span class="op">:</span> <span class="st">&quot;http://...&quot;</span><span class="op">,</span>
+    <span class="st">&quot;SupervisorContact&quot;</span><span class="op">:</span> <span class="st">&quot;super@visor.com&quot;</span><span class="op">,</span>
+    <span class="st">&quot;Testsets&quot;</span><span class="op">:</span> [
+        <span class="op">{</span>
+            <span class="st">&quot;Name&quot;</span><span class="op">:</span> <span class="st">&quot;Testset 1&quot;</span><span class="op">,</span>
+            <span class="st">&quot;Files&quot;</span><span class="op">:</span> <span class="op">{</span>
                 <span class="co">// ...</span>
-            }
-        },
-        {
-            <span class="st">&quot;Name&quot;</span>: <span class="st">&quot;Testset 2&quot;</span>,
-            <span class="st">&quot;Files&quot;</span>: {
+            <span class="op">}</span>
+        <span class="op">},</span>
+        <span class="op">{</span>
+            <span class="st">&quot;Name&quot;</span><span class="op">:</span> <span class="st">&quot;Testset 2&quot;</span><span class="op">,</span>
+            <span class="st">&quot;Files&quot;</span><span class="op">:</span> <span class="op">{</span>
                 <span class="co">// ...</span>
-            }
-        }
-        ],
+            <span class="op">}</span>
+        <span class="op">}</span>
+        ]<span class="op">,</span>
     <span class="co">// ...</span>
     <span class="co">// further test specific settings</span>
     <span class="co">// ...</span>
-}</code></pre>
+<span class="op">}</span></code></pre></div>
 <p>The <code>TestState</code> should be used to store random file mappings, ratings and other status variables, but can also be dynamically expanded with specific fields required by the child class. The <code>TestConfig</code> structure is just a mapping of the BeaqleJS config file into the class namespace. It has to contain at least the fields and structure as given above but it is possible to add additional sections which are required by the child class.</p>
 <p>Every new test class has to implement at least four new functions:</p>
 <ul>
@@ -291,10 +351,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><p><code>readRatings(TestIdx)</code> is intended to read the ratings for  from <code>this.TestState.Ratings[TestIdx]</code> and to reapply them to the sliders or buttons in the DOM. This is primarily used during switching back and forth in the test sequence.</p></li>
 <li><p><code>formatResults(TestIdx)</code> is automatically called after the final test in the sequence. It is supposed to evaluate and summarize the ratings and to store the final results in <code>this.TestState.EvalResults</code>. It should return a string containing the results formatted in a human readable manner (HTML). This will be presented to the listener after the last test and the <code>EvalResults</code> structure may be send to a web service (see <a href="#online-submission">Online Submission</a>).</p></li>
 </ul>
-<h1 id="contact">Contact</h1>
-<p><a href="http://hsu-ant.github.io/beaqlejs">http://hsu-ant.github.io/beaqlejs</a></p>
+<h1 id="contact">7. Contact</h1>
+<p><a href="http://hsu-ant.github.io/beaqlejs" class="uri">http://hsu-ant.github.io/beaqlejs</a></p>
 <p>skraft (AT) hsu-hh.de</p>
-<h1 id="license">License</h1>
+<h1 id="license">8. License</h1>
 <p>The complete sources, html and script files as well as images are released under the <em>GPLv3 license</em>. A copy of the GPL is provided in the <code>LICENSE.txt</code> file.</p>
 </body>
 </html>

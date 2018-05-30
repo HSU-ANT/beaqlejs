@@ -16,6 +16,7 @@ var TestConfig = {
   "RandomizeTestOrder": false,
   "MaxTestsPerRun": 3,
   "RequireMaxRating": false,
+  "AudioRoot": "",
   "Testsets": [
     //    
     {

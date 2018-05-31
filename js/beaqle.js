@@ -19,6 +19,11 @@
 // Enable JavaScript strict mode
 "use strict";
 
+// some linter configs
+/*jshint browser: true */
+/*jshint devel: true */
+/*globals $:false */
+
 // ###################################################################
 // Audio pool object. Creates and manages a set of <audio> tags.
 

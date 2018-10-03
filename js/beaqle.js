@@ -1113,8 +1113,6 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
                     animate: false,
                     orientation: "horizontal"
             });
-                    
-            $(this).slider('option', 'value', 0);
             $(this).css('background-image', 'url('+mushraConf.RateScaleBgPng+')');
         });
 

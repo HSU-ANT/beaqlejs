@@ -418,6 +418,14 @@ $.extend({ alert: function (message, title) {
         this.TestConfig = TestData;
         this.setDefaults(this.TestConfig);
 
+        var tmp = Array();
+        for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
+                for (var j = 0; j < this.TestConfig.Repeat; j++) {
+                        tmp.push(this.TestConfig.Testsets[i]);
+                }
+        }
+        this.TestConfig.Testsets = tmp;
+
         // some state variables
         this.TestState = {
             "CurrentTest": -1, 		// the current test index
@@ -513,17 +521,19 @@ $.extend({ alert: function (message, title) {
     // ###################################################################
     ListeningTest.prototype.setDefaults = function(config) {
         var defaults = {
-          "ShowFileIDs": false,
-          "ShowResults": false,
-          "LoopByDefault": true,
-          "AutoReturnByDefault": true,
-          "EnableABLoop": true,
-          "EnableOnlineSubmission": false,
-          "BeaqleServiceURL": "",
-          "SupervisorContact": "",
-          "RandomizeTestOrder": false,
-          "MaxTestsPerRun": -1,
-          "AudioRoot": ""
+            "ShowFileIDs": false,
+            "ShowResults": false,
+            "LoopByDefault": true,
+            "AutoReturnByDefault": true,
+            "EnableABLoop": true,
+            "EnableOnlineSubmission": false,
+            "BeaqleServiceURL": "",
+            "SupervisorContact": "",
+            "RandomizeTestOrder": false,
+            "MaxTestsPerRun": -1,
+            "AudioRoot": "",
+            "Repeat": 1,
+            "GroupRepeated": true
         }
       
         for (var property in defaults) {
@@ -609,19 +619,39 @@ $.extend({ alert: function (message, title) {
 
     // ###################################################################
     ListeningTest.prototype.startTests = function() {
-        
+
+        // if `GroupRepeated` is enabled, only the list of identical testsets are shuffled
+        // each testset is then duplicated `Repeat` times
+        const len = this.TestConfig.GroupRepeated ?
+            this.TestConfig.Testsets.length / this.TestConfig.Repeat :
+            this.TestConfig.Testsets.length;
+        const maxTake = this.TestConfig.GroupRepeated ?
+            Math.floor(this.TestConfig.MaxTestsPerRun / this.TestConfig.Repeat) :
+            this.TestConfig.MaxTestsPerRun;
+
         // init linear test sequence
         this.TestState.TestSequence = Array();
-        for (var i = 0; i < this.TestConfig.Testsets.length; i++)
+        for (var i = 0; i < len; i++)
             this.TestState.TestSequence[i] = i;
 
         // shorten and/or shuffle the sequence
         if ((this.TestConfig.MaxTestsPerRun > 0) && (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length)) {
             this.TestConfig.RandomizeTestOrder = true;
             this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
-            this.TestState.TestSequence = this.TestState.TestSequence.slice(0, this.TestConfig.MaxTestsPerRun);
+            this.TestState.TestSequence = this.TestState.TestSequence.slice(0, maxTake);
         } else if (this.TestConfig.RandomizeTestOrder == true) {
             this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
+        }
+
+        if (this.TestConfig.GroupRepeated) {
+            // repeat each element
+            var tmp = Array();
+            for (var i = 0; i < this.TestState.TestSequence.length; i++) {
+                for (var j = 0; j < this.TestConfig.Repeat; j++) {
+                    tmp.push(this.TestState.TestSequence[i] * this.TestConfig.Repeat + j);
+                }
+            }
+            this.TestState.TestSequence = tmp;
         }
 
         this.TestState.Ratings = Array(this.TestConfig.Testsets.length);

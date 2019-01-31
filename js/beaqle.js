@@ -841,9 +841,9 @@ $.extend({ alert: function (message, title) {
                         $('#SubmitError').show();
                         $('#SubmitError > #ErrorCode').html(response.message);
                         $("#SubmitBox > .submitOnline").hide();
-                        if (this.TestConfig.SupervisorContact) {
+                        if (testHandle.TestConfig.SupervisorContact) {
                             $("#SubmitBox > .submitEmail").show();
-                            $(".supervisorEmail").html(this.TestConfig.SupervisorContact);
+                            $(".supervisorEmail").html(testHandle.TestConfig.SupervisorContact);
                         }
                         if (testHandle.browserFeatures.webAPIs['Blob']) {
                             $("#SubmitBox > .submitDownload").show();
@@ -858,9 +858,9 @@ $.extend({ alert: function (message, title) {
                     $('#SubmitError').show();
                     $('#SubmitError > #ErrorCode').html(xhr.status);
                     $("#SubmitBox > .submitOnline").hide();
-                    if (this.TestConfig.SupervisorContact) {
+                    if (testHandle.TestConfig.SupervisorContact) {
                         $("#SubmitBox > .submitEmail").show();
-                        $(".supervisorEmail").html(this.TestConfig.SupervisorContact);
+                        $(".supervisorEmail").html(testHandle.TestConfig.SupervisorContact);
                     }
                     if (testHandle.browserFeatures.webAPIs['Blob']) {
                         $("#SubmitBox > .submitDownload").show();

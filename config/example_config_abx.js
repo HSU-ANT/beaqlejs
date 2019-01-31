@@ -6,8 +6,8 @@ var TestConfig = {
   "ShowResults": false,
   "EnableABLoop": true,
   "EnableOnlineSubmission": false,
-  "BeaqleServiceURL": "",
-  "SupervisorContact": "", 
+  "BeaqleServiceURL": "/web_service/beaqleJS_Service.php",
+  "SupervisorContact": "",
   "AudioRoot": "",
   "Testsets": [
     //    

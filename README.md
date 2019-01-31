@@ -252,11 +252,11 @@ BeaqleJS can send the test results in JSON format to a web service to collect th
 
 ## 5.1 Setup ##
 
-1. Upload the file `web_service/beaqleJS_Service.php` to a webserver. Create a folder named `results/` next to the PHP script and make sure that the webserver has write permissions on it.
+1. Verify that the `/web_service/beaqleJS_Service.php` file is uploaded to the root folder of your webserver next to the other BeaqleJS files. Create a folder `/web_service/results/` and make sure that the webserver has write permissions on it.
 
-2. Try to execute the script in your browser. For example, point your browser to `http://yourdomain.com/mysubfolder/beaqleJS_Service.php`. The script performs a self-test and checks PHP version and write permission of the `results/` folder.
+2. Try to execute the script in your browser. For example, point your browser to `http://yourdomain.com/web_service/beaqleJS_Service.php`. The script performs a self-test and checks PHP version and write permission of the `results/` folder.
 
-3. Enable online submission in the BeaqleJS config (`"EnableOnlineSubmission": true`) and set the `BeaqleServiceURL` to `http://yourdomain.com/mysubfolder/beaqleJS_Service.php`.
+3. Enable online submission in the BeaqleJS config (`"EnableOnlineSubmission": true`). If necessary, adjust the `BeaqleServiceURL` to point to the location where the `beaqleJS_Service.php` can be found. Note that the [Same Origin Policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) in almost every web browser forbids a cross-site result transmission without additional configuration of [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS). 
 
 ## 5.2 Security ##
 

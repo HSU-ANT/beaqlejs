@@ -429,16 +429,6 @@ $.extend({ alert: function (message, title) {
             "AudioLoadError": false
         }
 
-
-        // create and configure audio pool
-        this.audioPool = new AudioPool('AudioPool');
-        this.audioPool.register();
-        this.audioPool.onTimeUpdate = $.proxy(this.audioTimeCallback, this);
-        this.audioPool.onError = $.proxy(this.audioErrorCallback, this);
-        this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
-        this.audioPool.setLooped(this.TestConfig.LoopByDefault);
-        this.audioPool.setAutoReturn(this.TestConfig.AutoReturnByDefault);
-
         this.checkBrowserFeatures();
 
         // show introduction div
@@ -531,6 +521,50 @@ $.extend({ alert: function (message, title) {
                 config[property] = defaults[property];
         }
     }
+    
+    // ###################################################################
+    ListeningTest.prototype.initAudio = function() {
+        // create and configure audio pool
+        // In versions of chrome > 71 this has to be done in response to
+        // a user action in order to be able to play audio (https://goo.gl/7K7WLu)
+        this.audioPool = new AudioPool('AudioPool');
+        this.audioPool.register();
+        this.audioPool.onTimeUpdate = $.proxy(this.audioTimeCallback, this);
+        this.audioPool.onError = $.proxy(this.audioErrorCallback, this);
+        this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
+        this.audioPool.setLooped(this.TestConfig.LoopByDefault);
+        this.audioPool.setAutoReturn(this.TestConfig.AutoReturnByDefault);
+    }    
+    
+    // ###################################################################
+    ListeningTest.prototype.startTests = function() {
+        
+        // init audio pool after user started the tests
+        this.initAudio();
+        
+        // init linear test sequence
+        this.TestState.TestSequence = Array();
+        for (var i = 0; i < this.TestConfig.Testsets.length; i++)
+            this.TestState.TestSequence[i] = i;
+
+        // shorten and/or shuffle the sequence
+        if ((this.TestConfig.MaxTestsPerRun > 0) && (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length)) {
+            this.TestConfig.RandomizeTestOrder = true;
+            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
+            this.TestState.TestSequence = this.TestState.TestSequence.slice(0, this.TestConfig.MaxTestsPerRun);
+        } else if (this.TestConfig.RandomizeTestOrder == true) {
+            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
+        }
+
+        this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
+        this.TestState.Runtime = new Uint32Array(this.TestConfig.Testsets.length);
+//        this.TestState.Runtime.forEach(function(element, index, array){array[index] = 0});
+        this.TestState.startTime = 0;
+
+        // run first test
+        this.TestState.CurrentTest = 0;
+    	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
+    }
 
     // ###################################################################
     ListeningTest.prototype.nextTest = function() {
@@ -605,33 +639,6 @@ $.extend({ alert: function (message, title) {
             this.TestState.CurrentTest = this.TestState.CurrentTest-1;
         	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
         }
-    }
-
-    // ###################################################################
-    ListeningTest.prototype.startTests = function() {
-        
-        // init linear test sequence
-        this.TestState.TestSequence = Array();
-        for (var i = 0; i < this.TestConfig.Testsets.length; i++)
-            this.TestState.TestSequence[i] = i;
-
-        // shorten and/or shuffle the sequence
-        if ((this.TestConfig.MaxTestsPerRun > 0) && (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length)) {
-            this.TestConfig.RandomizeTestOrder = true;
-            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
-            this.TestState.TestSequence = this.TestState.TestSequence.slice(0, this.TestConfig.MaxTestsPerRun);
-        } else if (this.TestConfig.RandomizeTestOrder == true) {
-            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
-        }
-
-        this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
-        this.TestState.Runtime = new Uint32Array(this.TestConfig.Testsets.length);
-//        this.TestState.Runtime.forEach(function(element, index, array){array[index] = 0});
-        this.TestState.startTime = 0;
-
-        // run first test
-        this.TestState.CurrentTest = 0;
-    	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
     }
 
     // ###################################################################    
@@ -897,8 +904,17 @@ $.extend({ alert: function (message, title) {
         var features = new Object();
 
         features.webAPIs = new Array();
-        features.webAPIs['webAudio'] = this.audioPool.waContext!==false;
         features.webAPIs['Blob']     = !!window.Blob;
+        
+        // check web audio support
+        try {
+           var genContextClass = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
+           var waContext = new genContextClass();
+           features.webAPIs['webAudio'] = waContext !== false;
+        } catch(e) {
+           // API not supported
+           features.webAPIs['webAudio'] = false;
+        }    
 
         features.audioFormats = new Array();
         var a = document.createElement('audio');

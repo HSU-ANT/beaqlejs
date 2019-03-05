@@ -392,6 +392,19 @@ $.extend({ alert: function (message, title) {
 }
 });
 
+// combinatory function
+function nCr(n, r) {
+    if (r > n - r) r = n - r;
+    return r == 0 ? 1 : (nCr(n, r - 1) * (n - r + 1) / r);
+}
+
+// probability of random guessing
+function binomialProb(total, correct) {
+    var res = 0;
+    for (var i = total; i >= correct; i--) res += nCr(total, i);
+    return res / (2 ** total);
+}
+
 // ###################################################################
 // Listening test main object
 
@@ -1335,6 +1348,7 @@ AbxTest.prototype.formatResults = function () {
     resultstring += tab.outerHTML;
 
     resultstring += "<br/><p>Percentage of correct assignments: " + (numCorrect/this.TestConfig.Testsets.length*100).toFixed(2) + " %</p>";
+    resultstring += "<br/><p>Probabilty that you were guessing: " + (binomialProb(this.TestState.TestSequence.length, numCorrect) * 100).toFixed(2) + " %</p>";
     return resultstring;
 }
 

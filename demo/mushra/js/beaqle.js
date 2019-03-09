@@ -19,6 +19,11 @@
 // Enable JavaScript strict mode
 "use strict";
 
+// some linter configs
+/*jshint browser: true */
+/*jshint devel: true */
+/*globals $:false */
+
 // ###################################################################
 // Audio pool object. Creates and manages a set of <audio> tags.
 
@@ -27,11 +32,16 @@
         this.NumPlayers = 0;
         this.NumUsed = 0;
         this.LoopAudio = 0;
+        this.LoopFade = false;
+        this.AutoReturn = true;
         this.ABPos = [0, 100];
         this.PoolID = PoolID;
         this.IDPlaying = -1;
-        this.fadeOutTime = 0.02;
-        this.positionUpdateInterval = 0.01;
+        this.fadeInTime  = 0.03;
+        this.fadeOutTime = 0.01;
+        this.fadeDelay   = 0.01;
+        this.lastAudioPosition = 0;
+        this.positionUpdateInterval = 0.005;
 
         // web audio is only supported for same origin
         switch(window.location.protocol) {
@@ -51,12 +61,17 @@
              this.waContext = false;
              break;
         }
-        
-        if (!clientIsChrome())
+        // IE does not support the WebAudioAPI
+        if (clientIsIE() || clientIsSafari())
             this.waContext = false;
 
+        // Firefox needs a longer delay before we start a fading curve,
+        // otherwise the fading is not recognized
+        if (clientIsFirefox())
+            this.fadeDelay = 0.05;
+
         // set to false to manually disable WebAudioAPI support
-        // this.waContext = false;
+        //this.waContext = false;
 
         // setup regular callback timer to check current playback position
         var _this = this;
@@ -78,21 +93,14 @@
             
             // calculate progress including a look ahead for fade out or loop
             var progress = 0;
-            progress = (audiotag.currentTime+_this.positionUpdateInterval+_this.fadeOutTime) / audiotag.duration * 100;
-            
+            progress = (audiotag.currentTime+_this.positionUpdateInterval+_this.fadeOutTime*2) / audiotag.duration * 100.0;
+
             // if end is reached ...
-            if (progress >= _this.ABPos[1]) {
-                if (this.waContext!==false) {
-                    if (_this.LoopAudio == true) {
-                        var currID = _this.IDPlaying;
-                        setTimeout( function(){_this.play(currID)}, _this.fadeOutTime*1000 + 10);                    
-                    }
-                    _this.pause();
+            if ((progress >= _this.ABPos[1]) && (!_this.LoopFade)) {
+                if (_this.LoopAudio == true) {
+                    _this.loopReturn();
                 } else {
-                    if (_this.LoopAudio == true)
-                        _this.play(_this.IDPlaying);
-                    else 
-                        _this.pause();
+                    _this.pause();
                 }
             }
         }
@@ -142,7 +150,8 @@
             var source = this.waContext.createMediaElementSource(audiotag);
             source.connect(gainNode);
             gainNode.connect(this.waContext.destination);
-            gainNode.gain.setValueAtTime(0.00001, 0);
+            gainNode.gain.value = 0.0000001;  // fixes https://bugzilla.mozilla.org/show_bug.cgi?id=1213313
+            gainNode.gain.setValueAtTime(0.0000001, this.waContext.currentTime);
             this.gainNodes[ID] = gainNode;
         }
         
@@ -169,38 +178,77 @@
     AudioPool.prototype.play = function(ID){
         var audiotag = $('#'+this.PoolID+' > #audio'+ID).get(0);
         
-        audiotag.currentTime = 0.0001 + this.ABPos[0] / 100 * audiotag.duration;
-        
+        if ((this.AutoReturn===false) &&
+            (this.lastAudioPosition + this.fadeDelay <= (this.ABPos[1] / 100 * audiotag.duration)) &&
+            (this.lastAudioPosition >= (this.ABPos[0] / 100 * audiotag.duration)))
+                audiotag.currentTime = this.lastAudioPosition;
+        else
+            audiotag.currentTime = 0.000001 + this.ABPos[0] / 100.0 * audiotag.duration;
+
         if (this.waContext!==false) {
-            //this.gainNodes[ID].gain.cancelScheduledValues(this.waContext.currentTime);
-            this.gainNodes[ID].gain.setValueAtTime(0.00001, this.waContext.currentTime);
-            this.gainNodes[ID].gain.exponentialRampToValueAtTime(1, this.waContext.currentTime + this.fadeOutTime);
+            var loopLen = (this.ABPos[1] - this.ABPos[0]) / 100.0 * audiotag.duration;
+            if (loopLen > this.fadeOutTime*2 + this.positionUpdateInterval*2) {
+                this.gainNodes[ID].gain.cancelScheduledValues(this.waContext.currentTime);
+                this.gainNodes[ID].gain.value = 0.0000001;  // fixes https://bugzilla.mozilla.org/show_bug.cgi?id=1213313
+                this.gainNodes[ID].gain.setValueAtTime(0.0000001, this.waContext.currentTime);                
+                this.gainNodes[ID].gain.setTargetAtTime(1.0, this.waContext.currentTime + this.fadeDelay, this.fadeInTime);
+                this.LoopFade = false;
+                audiotag.play();
+            }
+        } else {
+            audiotag.play();
         }
-    
-        audiotag.play();
+        
         this.IDPlaying = ID;
     }
+
+    // return to loop begin
+    AudioPool.prototype.loopReturn = function() { 
+
+        if (this.waContext!==false) {
+            // fade out
+            this.gainNodes[this.IDPlaying].gain.cancelScheduledValues(this.waContext.currentTime);
+            this.gainNodes[this.IDPlaying].gain.setTargetAtTime(0.0, this.waContext.currentTime + this.fadeDelay, this.fadeOutTime);
+            this.LoopFade = true;
+
+            var audiotag = $('#'+this.PoolID+' > #audio'+this.IDPlaying).get(0);
+            var currID = this.IDPlaying;
+            var _this  = this;
+            // wait till fade out is done
+            setTimeout( function(){
+                    _this.LoopFade = false;
+                    audiotag.currentTime = 0.000001 + _this.ABPos[0] / 100.0 * audiotag.duration;
+                    _this.gainNodes[_this.IDPlaying].gain.cancelScheduledValues(_this.waContext.currentTime);
+                    _this.gainNodes[_this.IDPlaying].gain.setTargetAtTime(1.0, _this.waContext.currentTime + _this.fadeDelay, _this.fadeInTime);
+                },
+                (_this.fadeOutTime*2.0 + _this.fadeDelay)*1000.0 + 5.0
+            );
+        } else {
+            // return to the start marker
+            var audiotag = $('#'+this.PoolID+' > #audio'+this.IDPlaying).get(0);
+            audiotag.currentTime = 0.000001 + this.ABPos[0] / 100.0 * audiotag.duration;
+            audiotag.play();
+        }
+    }
     
-    // pause currentyl playing audio
+    // pause currently playing audio
     AudioPool.prototype.pause = function() {   
 
         if (this.IDPlaying!==-1) {
-
+ 
             var audiotag = $('#'+this.PoolID+' > #audio'+this.IDPlaying).get(0);
-            if (this.waContext!==false) {
-                //this.gainNodes[this.IDPlaying].gain.cancelScheduledValues(this.waContext.currentTime);
-                this.gainNodes[this.IDPlaying].gain.setValueAtTime(1, this.waContext.currentTime);
-                this.gainNodes[this.IDPlaying].gain.exponentialRampToValueAtTime(0.00001, this.waContext.currentTime + this.fadeOutTime);
-        
-                var _this = this;
-                (function(atag,prevID){
-                        setTimeout( function(){if (_this.IDPlaying!==prevID) atag.pause();}, _this.fadeOutTime*1000 + 10);
-                })(audiotag,this.IDPlaying);
-                this.IDPlaying = -1;
+            this.lastAudioPosition = audiotag.currentTime;
+            if ((this.waContext!==false) && (!audiotag.paused)) {
+                this.gainNodes[this.IDPlaying].gain.cancelScheduledValues(this.waContext.currentTime);
+                this.gainNodes[this.IDPlaying].gain.setTargetAtTime(0.0, this.waContext.currentTime + this.fadeDelay, this.fadeOutTime );
+
+                var _this  = this;
+                var prevID = this.IDPlaying;
+                setTimeout( function(){if (_this.IDPlaying!==prevID) audiotag.pause();}, (_this.fadeOutTime*2.0 + _this.fadeDelay)*1000.0 + 5.0);
             } else {
                 audiotag.pause();
             }
-
+            this.IDPlaying = -1;
         }
     }
 
@@ -224,6 +272,16 @@
         this.LoopAudio = !this.LoopAudio;
     }
 
+    // set auto return mode
+    AudioPool.prototype.setAutoReturn = function(autoReturn) {
+            this.AutoReturn = autoReturn;
+    }
+
+    // toggle auto return mode
+    AudioPool.prototype.toggleAutoReturn = function() {
+        this.AutoReturn = !this.AutoReturn;
+    }
+
 
 // ###################################################################
 // some helper functions
@@ -242,9 +300,64 @@ function clientIsIE() {
     return 0;
 }
 
+// check for Firefox
+function clientIsFirefox() {
+    return typeof InstallTrigger !== 'undefined';
+}
+
 // check for Google Chrome/Chromium
 function clientIsChrome() {
-    return !!window.chrome;
+    return !!window.chrome && !clientIsOpera();
+}
+
+// check for Apple Safari
+function clientIsSafari() {
+    return Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+}
+
+// check for Opera
+function clientIsOpera() {
+    return !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+}
+
+// get date and time formatted as YYYMMDD-hhmmss
+function getDateStamp() {
+    var date = new Date();
+    function pad(num) {
+        num = num + '';
+        return num.length < 2 ? '0' + num : num;
+    }
+    return date.getFullYear() + 
+        pad(date.getMonth() + 1) +
+        pad(date.getDate()) + '-' +
+        pad(date.getHours()) + 
+        pad(date.getMinutes()) +
+        pad(date.getSeconds());
+}
+
+// provide a virtual download to text file with a specified file name
+function saveTextAsFile(txt, fileName)
+{
+	var fileBlob = new Blob([txt], {type:'text/plain'});
+
+	var downloadLink = document.createElement("a");
+	downloadLink.download = fileName;
+	downloadLink.innerHTML = "Download File";
+
+    // safari does not download text files but tries to open them in the browser
+    // so let's at least open a new window for that
+    if (clientIsSafari())
+        downloadLink.target = "_blank";
+
+	downloadLink.href = window.URL.createObjectURL(fileBlob);
+	downloadLink.onclick = function (event) {document.body.removeChild(event.target);};
+	downloadLink.style.display = "none";
+
+	// Firefox requires the link to be added to the DOM
+	// before it can be clicked.
+	document.body.appendChild(downloadLink);
+
+	downloadLink.click();
 }
 
 // shuffle array entries using the Fisher-Yates algorithm
@@ -294,13 +407,16 @@ $.extend({ alert: function (message, title) {
             alert('Config file could not be loaded!');
         }
 
-        // check for IE as it does not support .wav in <audio> tags
-        // if (clientIsIE()) {
-        //    alert('Internet Explorer is not supported! Please use Firefox, Opera, Google Chrome or any other HTML5 capable browser.');
-        //    return;
-        // }
+        // check for IE as it does not support the FileAPI-Blob constructor below version 9
+        if ((clientIsIE() > 0) && (clientIsIE() < 9)) {
+           $('#LoadOverlay').show();
+           $('#LoadOverlay').append('<p class="error">Internet Explorer version 8 and below is unfortunately not supported by BeaqleJS. Please update to a recent release or choose another browser.</p>');
+           return;
+        }
         
+        // Load and verify config
         this.TestConfig = TestData;
+        this.setDefaults(this.TestConfig);
 
         // some state variables
         this.TestState = {
@@ -313,20 +429,12 @@ $.extend({ alert: function (message, title) {
             "AudioLoadError": false
         }
 
-
-        // create and configure audio pool
-        this.audioPool = new AudioPool('AudioPool');
-        this.audioPool.register();
-        this.audioPool.onTimeUpdate = $.proxy(this.audioTimeCallback, this);
-        this.audioPool.onError = $.proxy(this.audioErrorCallback, this);
-        this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
-        this.audioPool.setLooped(this.TestConfig.LoopByDefault);
+        this.checkBrowserFeatures();
 
         // show introduction div
         $('#TestTitle').html(this.TestConfig.TestName);
         $('#TestIntroduction').show();
         
-
         // setup buttons and controls
         var handlerObject = this;
         $('#VolumeSlider').slider({
@@ -355,13 +463,19 @@ $.extend({ alert: function (message, title) {
         }
         $('#PauseButton').button();
 
-        //$('#ChkLoopAudio').button();
         if (this.TestConfig.LoopByDefault) {
             $('#ChkLoopAudio').prop("checked", true);
         } else {
             $('#ChkLoopAudio').prop("checked", false);
         }
         $('#ChkLoopAudio').on('change', $.proxy(handlerObject.toggleLooping, handlerObject));
+        
+        if (this.TestConfig.AutoReturnByDefault) {
+            $('#ChkAutoReturn').prop("checked", true);
+        } else {
+            $('#ChkAutoReturn').prop("checked", false);
+        }
+        $('#ChkAutoReturn').on('change', $.proxy(handlerObject.toggleAutoReturn, handlerObject));
 
         $('#ProgressBar').progressbar();
         $('#BtnNextTest').button();
@@ -369,7 +483,8 @@ $.extend({ alert: function (message, title) {
         $('#BtnPrevTest').button();
         $('#BtnPrevTest').on('click', $.proxy(handlerObject.prevTest, handlerObject));
         $('#BtnStartTest').button();
-        $('#BtnSubmitData').button({ icons: { primary: 'ui-icon-locked' }});        
+        $('#BtnSubmitData').button({ icons: { primary: 'ui-icon-signal-diag' }});     
+        $('#BtnDownloadData').button({ icons: { primary: 'ui-icon-arrowthickstop-1-s' }});
                 
 
         // install handler to warn user when test is running and he tries to leave the page
@@ -383,6 +498,72 @@ $.extend({ alert: function (message, title) {
         }
 
 
+    }
+
+    // ###################################################################
+    ListeningTest.prototype.setDefaults = function(config) {
+        var defaults = {
+          "ShowFileIDs": false,
+          "ShowResults": false,
+          "LoopByDefault": true,
+          "AutoReturnByDefault": true,
+          "EnableABLoop": true,
+          "EnableOnlineSubmission": false,
+          "BeaqleServiceURL": "",
+          "SupervisorContact": "",
+          "RandomizeTestOrder": false,
+          "MaxTestsPerRun": -1,
+          "AudioRoot": ""
+        }
+      
+        for (var property in defaults) {
+            if (config[property] === undefined)
+                config[property] = defaults[property];
+        }
+    }
+    
+    // ###################################################################
+    ListeningTest.prototype.initAudio = function() {
+        // create and configure audio pool
+        // In versions of chrome > 71 this has to be done in response to
+        // a user action in order to be able to play audio (https://goo.gl/7K7WLu)
+        this.audioPool = new AudioPool('AudioPool');
+        this.audioPool.register();
+        this.audioPool.onTimeUpdate = $.proxy(this.audioTimeCallback, this);
+        this.audioPool.onError = $.proxy(this.audioErrorCallback, this);
+        this.audioPool.onDataLoaded = $.proxy(this.audioLoadedCallback, this);
+        this.audioPool.setLooped(this.TestConfig.LoopByDefault);
+        this.audioPool.setAutoReturn(this.TestConfig.AutoReturnByDefault);
+    }    
+    
+    // ###################################################################
+    ListeningTest.prototype.startTests = function() {
+        
+        // init audio pool after user started the tests
+        this.initAudio();
+        
+        // init linear test sequence
+        this.TestState.TestSequence = Array();
+        for (var i = 0; i < this.TestConfig.Testsets.length; i++)
+            this.TestState.TestSequence[i] = i;
+
+        // shorten and/or shuffle the sequence
+        if ((this.TestConfig.MaxTestsPerRun > 0) && (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length)) {
+            this.TestConfig.RandomizeTestOrder = true;
+            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
+            this.TestState.TestSequence = this.TestState.TestSequence.slice(0, this.TestConfig.MaxTestsPerRun);
+        } else if (this.TestConfig.RandomizeTestOrder == true) {
+            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
+        }
+
+        this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
+        this.TestState.Runtime = new Uint32Array(this.TestConfig.Testsets.length);
+//        this.TestState.Runtime.forEach(function(element, index, array){array[index] = 0});
+        this.TestState.startTime = 0;
+
+        // run first test
+        this.TestState.CurrentTest = 0;
+    	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
     }
 
     // ###################################################################
@@ -410,18 +591,31 @@ $.extend({ alert: function (message, title) {
                 $('#PlayerControls').hide();
                 $('#TestControls').hide();
                 $('#TestEnd').show();
-                
-                var resultsBox = document.getElementById('ResultsBox');
-                
-                resultsBox.innerHTML = this.formatResults();
-                                        
-                if (this.TestConfig.EnableOnlineSubmission) {
-                    $("#ResultsBox").hide();
-                    $("#SubmitBox").show();
-                } else {
+
+                $('#ResultsBox').html(this.formatResults());
+                if (this.TestConfig.ShowResults)
                     $("#ResultsBox").show();
-                    $("#SubmitBox").hide();
-                    this.TestState.TestIsRunning = 0;
+                else
+                    $("#ResultsBox").hide();
+
+                $("#SubmitBox").show();
+
+                $("#SubmitBox > .submitEmail").hide();
+                if (this.TestConfig.EnableOnlineSubmission) {
+                    $("#SubmitBox > .submitOnline").show();
+                    $("#SubmitBox > .submitDownload").hide();
+                } else {
+                    $("#SubmitBox > .submitOnline").hide();
+                    if (this.TestConfig.SupervisorContact) {
+                        $("#SubmitBox > .submitEmail").show();
+                        $(".supervisorEmail").html(this.TestConfig.SupervisorContact);
+                    }
+                    if (this.browserFeatures.webAPIs['Blob']) {
+                        $("#SubmitBox > .submitDownload").show();
+                    } else {
+                        $("#SubmitBox > .submitDownload").hide();
+                        $("#ResultsBox").show();
+                    }
                 }
             }
             return;
@@ -445,33 +639,6 @@ $.extend({ alert: function (message, title) {
             this.TestState.CurrentTest = this.TestState.CurrentTest-1;
         	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
         }
-    }
-
-    // ###################################################################
-    ListeningTest.prototype.startTests = function() {
-        
-        // init linear test sequence
-        this.TestState.TestSequence = Array();
-        for (var i = 0; i < this.TestConfig.Testsets.length; i++)
-            this.TestState.TestSequence[i] = i;
-
-        // shorten and/or shuffle the sequence
-        if ((this.TestConfig.MaxTestsPerRun > 0) && (this.TestConfig.MaxTestsPerRun < this.TestConfig.Testsets.length)) {
-            this.TestConfig.RandomizeTestOrder = true;
-            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
-            this.TestState.TestSequence = this.TestState.TestSequence.slice(0, this.TestConfig.MaxTestsPerRun);
-        } else if (this.TestConfig.RandomizeTestOrder == true) {
-            this.TestState.TestSequence = shuffleArray(this.TestState.TestSequence);
-        }
-
-        this.TestState.Ratings = Array(this.TestConfig.Testsets.length);
-        this.TestState.Runtime = new Uint32Array(this.TestConfig.Testsets.length);
-//        this.TestState.Runtime.forEach(function(element, index, array){array[index] = 0});
-        this.TestState.startTime = 0;
-
-        // run first test
-        this.TestState.CurrentTest = 0;
-    	this.runTest(this.TestState.TestSequence[this.TestState.CurrentTest]);
     }
 
     // ###################################################################    
@@ -617,9 +784,15 @@ $.extend({ alert: function (message, title) {
 
 
     // ###################################################################
-    // enable looping for all audios
+    // enable/disable looping for all audios
     ListeningTest.prototype.toggleLooping = function () {    
         this.audioPool.toggleLooped();
+    }
+    
+    // ###################################################################
+    // enable/disable auto return for all audios
+    ListeningTest.prototype.toggleAutoReturn = function () {    
+        this.audioPool.toggleAutoReturn();
     }
 
     // ###################################################################
@@ -643,94 +816,152 @@ $.extend({ alert: function (message, title) {
     // add and load audio file with specified ID
     ListeningTest.prototype.addAudio = function (TestIdx, fileID, relID) {
         this.TestState.AudiosInLoadQueue += 1;
-        this.audioPool.addAudio(this.TestConfig.Testsets[TestIdx].Files[fileID], relID)
+        this.audioPool.addAudio(this.TestConfig.AudioRoot +
+                                this.TestConfig.Testsets[TestIdx].Files[fileID],
+                                relID)
     }
 
     // ###################################################################
     // submit test results to server
     ListeningTest.prototype.SubmitTestResults = function () {
-            
-        var UserName = $('#UserName').val();
-        var UserEMail = $('#UserEMail').val();
-        var UserComment = $('#UserComment').val();
+
+        var UserObj = new Object();
+        UserObj.UserName = $('#UserName').val();
+        UserObj.UserEmail = $('#UserEMail').val();
+        UserObj.UserComment = $('#UserComment').val();
+
+        var EvalResults = this.TestState.EvalResults;        
+        EvalResults.push(UserObj)
         
         var testHandle = this;
-        var EvalResultsJSON = JSON.stringify(testHandle.TestState.EvalResults);
-
         $.ajax({
                     type: "POST",
                     timeout: 5000,
                     url: testHandle.TestConfig.BeaqleServiceURL,
-                    data: {'testresults':EvalResultsJSON, 'username':UserName, 'useremail':UserEMail, 'usercomment':UserComment},
+                    data: {'testresults':JSON.stringify(EvalResults), 'username':UserObj.UserName},
                     dataType: 'json'})
             .done( function (response){
                     if (response.error==false) {
                         $('#SubmitBox').html("Your submission was successful.<br/><br/>");
-
-                        $("#ResultsBox").show();
-                        $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-check' }});
                         testHandle.TestState.TestIsRunning = 0;
                     } else {
-                        $('#SubmitBox').html("<span class='error'>The following error occured during your submission:<br/>"
-                                                +response.message+
-                                                "<br/><br/> Please copy/paste the following table content and send it to our email adress "
-                                                +testHandle.TestConfig.SupervisorContact+"<br/><br/> Sorry for any inconvenience!</span><br/><br/>"); 
-                        $("#ResultsBox").show();   
+                        $('#SubmitError').show();
+                        $('#SubmitError > #ErrorCode').html(response.message);
+                        $("#SubmitBox > .submitOnline").hide();
+                        if (testHandle.TestConfig.SupervisorContact) {
+                            $("#SubmitBox > .submitEmail").show();
+                            $(".supervisorEmail").html(testHandle.TestConfig.SupervisorContact);
+                        }
+                        if (testHandle.browserFeatures.webAPIs['Blob']) {
+                            $("#SubmitBox > .submitDownload").show();
+                        } else {
+                            $("#SubmitBox > .submitDownload").hide();
+                            $("#ResultsBox").show();
+                        }
                         $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-alert' }});
                     }
                 })
             .fail (function (xhr, ajaxOptions, thrownError){
-                    $('#SubmitBox').html("<span class='error'>The following error occured during your submission:<br/>"
-                                            +xhr.status+
-                                            "<br/><br/> Please copy/paste the following table content and send it to our email adress "
-                                            +testHandle.TestConfig.SupervisorContact+"<br/><br/> Sorry for any inconvenience!</span><br/><br/>");
-                    $("#ResultsBox").show();   
-                    $('#SubmitData').button('option',{ icons: { primary: 'ui-icon-alert' }});
+                    $('#SubmitError').show();
+                    $('#SubmitError > #ErrorCode').html(xhr.status);
+                    $("#SubmitBox > .submitOnline").hide();
+                    if (testHandle.TestConfig.SupervisorContact) {
+                        $("#SubmitBox > .submitEmail").show();
+                        $(".supervisorEmail").html(testHandle.TestConfig.SupervisorContact);
+                    }
+                    if (testHandle.browserFeatures.webAPIs['Blob']) {
+                        $("#SubmitBox > .submitDownload").show();
+                    } else {
+                        $("#SubmitBox > .submitDownload").hide();
+                        $("#ResultsBox").show();
+                    }
                 });
-        $('#SubmitData').button('option',{ icons: { primary: 'load-indicator' }});
+        $('#BtnSubmitData').button('option',{ icons: { primary: 'load-indicator' }});
 
     }
 
+    // ###################################################################
+    // submit test results to server
+    ListeningTest.prototype.DownloadTestResults = function () {
+
+        var UserObj = new Object();
+        UserObj.UserName = $('#UserName').val();
+        UserObj.UserEmail = $('#UserEMail').val();
+        UserObj.UserComment = $('#UserComment').val();
+
+        var EvalResults = this.TestState.EvalResults;        
+        EvalResults.push(UserObj)
+
+        saveTextAsFile(JSON.stringify(EvalResults), getDateStamp() + "_" + UserObj.UserName + ".txt");
+
+        this.TestState.TestIsRunning = 0;
+    }
 
     // ###################################################################
     // Check browser capabilities
-    ListeningTest.prototype.browserFeatures = function () {
+    ListeningTest.prototype.checkBrowserFeatures = function () {
+
+        var features = new Object();
+
+        features.webAPIs = new Array();
+        features.webAPIs['Blob']     = !!window.Blob;
         
+        // check web audio support
+        try {
+           var genContextClass = (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext);
+           var waContext = new genContextClass();
+           features.webAPIs['webAudio'] = waContext !== false;
+        } catch(e) {
+           // API not supported
+           features.webAPIs['webAudio'] = false;
+        }    
+
+        features.audioFormats = new Array();
+        var a = document.createElement('audio');
+        features.audioFormats['WAV'] = !!(a.canPlayType && a.canPlayType('audio/wav; codecs="1"').replace(/no/, ''));
+        features.audioFormats['FLAC'] = !!(a.canPlayType && a.canPlayType('audio/flac').replace(/no/, ''));
+        features.audioFormats['OGG'] = !!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/, ''));
+        features.audioFormats['MP3'] = !!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''));
+        features.audioFormats['AAC'] = !!(a.canPlayType && a.canPlayType('audio/mp4; codecs="mp4a.40.2"').replace(/no/, ''));
+
+        this.browserFeatures = features;
     }
 
     // ###################################################################
     // Get browser features formatted as a HTML string
     ListeningTest.prototype.browserFeatureString = function () {
         var featStr = "Available HTML5 browser features:";
-        if (this.audioPool.waContext!==false)
-            featStr += " <span class='feature-available'>WebAudioAPI</span>";
+        if (this.browserFeatures.webAPIs['webAudio'])
+            featStr += " <span class='feature-available'>WebAudioAPI</span>, ";
         else
-            featStr += " <span class='feature-not-available'>WebAudioAPI</span>";
+            featStr += " <span class='feature-not-available'>WebAudioAPI</span>, ";
 
-        featStr += ",";
-        var a = document.createElement('audio');
-        if (!!(a.canPlayType && a.canPlayType('audio/wav; codecs="1"').replace(/no/, '')))
-            featStr += " <span class='feature-available'>WAV</span>";
+        if (this.browserFeatures.webAPIs['Blob'])
+            featStr += " <span class='feature-available'>BlobAPI</span>, ";
         else
-            featStr += " <span class='feature-not-available'>WAV</span>";
+            featStr += " <span class='feature-not-available'>BlobAPI</span>, ";
 
-        featStr += ",";
-        var a = document.createElement('audio');
-        if (!!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/, '')))
-            featStr += " <span class='feature-available'>Vorbis</span>";
+        if (this.browserFeatures.audioFormats['WAV'])
+            featStr += " <span class='feature-available'>WAV</span>, ";
         else
-            featStr += " <span class='feature-not-available'>Vorbis</span>";
+            featStr += " <span class='feature-not-available'>WAV</span>, ";
 
-        featStr += ",";
-        var a = document.createElement('audio');
-        if (!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, '')))
-            featStr += " <span class='feature-available'>MP3</span>";
+        if (this.browserFeatures.audioFormats['FLAC'])
+            featStr += " <span class='feature-available'>FLAC</span>, ";
         else
-            featStr += " <span class='feature-not-available'>MP3</span>";
+            featStr += " <span class='feature-not-available'>FLAC</span>, ";
 
-        featStr += ",";
-        var a = document.createElement('audio');
-        if (!!(a.canPlayType && a.canPlayType('audio/mp4; codecs="mp4a.40.2"').replace(/no/, '')))
+        if (this.browserFeatures.audioFormats['OGG'])
+            featStr += " <span class='feature-available'>Vorbis</span>, ";
+        else
+            featStr += " <span class='feature-not-available'>Vorbis</span>, ";
+
+        if (this.browserFeatures.audioFormats['MP3'])
+            featStr += " <span class='feature-available'>MP3</span>, ";
+        else
+            featStr += " <span class='feature-not-available'>MP3</span>, ";
+        
+        if (this.browserFeatures.audioFormats['AAC'])
             featStr += " <span class='feature-available'>AAC</span>";
         else
             featStr += " <span class='feature-not-available'>AAC</span>";
@@ -898,8 +1129,6 @@ MushraTest.prototype.createTestDOM = function (TestIdx) {
                     animate: false,
                     orientation: "horizontal"
             });
-                    
-            $(this).slider('option', 'value', 0);
             $(this).css('background-image', 'url('+mushraConf.RateScaleBgPng+')');
         });
 
@@ -1106,5 +1335,149 @@ AbxTest.prototype.formatResults = function () {
     resultstring += tab.outerHTML;
 
     resultstring += "<br/><p>Percentage of correct assignments: " + (numCorrect/this.TestConfig.Testsets.length*100).toFixed(2) + " %</p>";
+    return resultstring;
+}
+
+
+
+// ###################################################################
+// Preference test main object (modelled after ABX-Test)
+
+// inherit from ListeningTest
+function PrefTest(TestData) {
+    ListeningTest.apply(this, arguments);
+}
+PrefTest.prototype = new ListeningTest();
+PrefTest.prototype.constructor = PrefTest;
+
+
+// implement specific code
+PrefTest.prototype.createTestDOM = function (TestIdx) {
+
+        // clear old test table
+        if ($('#TableContainer > table')) {
+            $('#TableContainer > table').remove();
+        }
+
+        // create new test table
+        var tab = document.createElement('table');
+        tab.setAttribute('id','TestTable');
+            
+        var fileID = "";
+        var row = new Array();
+        var cell = new Array();
+
+  
+        // create random file mapping if not yet done
+        if (!this.TestState.FileMappings[TestIdx]) {
+           this.TestState.FileMappings[TestIdx] = {"A": "", "B": ""};
+           var RandFileNumber = Math.random();
+           if (this.TestConfig.RandomizeFileOrder && RandFileNumber>0.5) {
+               this.TestState.FileMappings[TestIdx].A = "B";
+               this.TestState.FileMappings[TestIdx].B = "A";
+           } else {
+               this.TestState.FileMappings[TestIdx].A = "A";
+               this.TestState.FileMappings[TestIdx].B = "B";
+            }                
+        }	
+            
+        // add reference
+        fileID = this.TestState.FileMappings[TestIdx].A;
+        row  = tab.insertRow(-1);
+        cell[0] = row.insertCell(-1);
+        cell[0].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">A</button>';
+        this.addAudio(TestIdx, fileID, fileID);
+
+        fileID = this.TestState.FileMappings[TestIdx].B;
+        cell[1] = row.insertCell(-1);
+        cell[1].innerHTML = '<button id="play'+fileID+'Btn" class="playButton" rel="'+fileID+'">B</button>';
+        this.addAudio(TestIdx, fileID, fileID);
+
+        cell[2] = row.insertCell(-1);
+        cell[2].innerHTML = "<button class='stopButton'>Stop</button>";
+        
+        cell[3] = row.insertCell(-1);
+        cell[3].innerHTML = "Press buttons to start/stop playback."; 
+ 
+        row[1]  = tab.insertRow(-1);
+        cell[0] = row[1].insertCell(-1);
+        cell[0].innerHTML = "<input type='radio' name='ItemSelection' id='selectA'/>";
+        cell[1] = row[1].insertCell(-1);
+        cell[1].innerHTML = "<input type='radio' name='ItemSelection' id='selectB'/>";  
+        cell[2] = row[1].insertCell(-1);
+        cell[3] = row[1].insertCell(-1);
+        cell[3].innerHTML = "Please select the item which you prefer!";
+       
+        // add spacing
+        row = tab.insertRow(-1);
+        row.setAttribute("height","5");  
+
+        // append the created table to the DOM
+        $('#TableContainer').append(tab);	
+
+        // randomly preselect one radio button
+        if (typeof this.TestState.Ratings[TestIdx] == 'undefined') {
+            /*if (Math.random() > 0.5) {
+               $("#selectB").prop("checked", true);
+            } else {
+               $("#selectA").prop("checked", true);
+            }*/
+        }
+}
+
+
+PrefTest.prototype.readRatings = function (TestIdx) {
+
+    if (this.TestState.Ratings[TestIdx] === "A") {
+        $("#selectA").prop("checked", true);
+    } else if (this.TestState.Ratings[TestIdx] === "B") {
+        $("#selectB").prop("checked", true);
+    }
+
+}
+
+PrefTest.prototype.saveRatings = function (TestIdx) {
+
+    if ($("#selectA").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = "A";
+    } else if ($("#selectB").prop("checked")) {
+        this.TestState.Ratings[TestIdx] = "B";
+    }
+}
+
+PrefTest.prototype.formatResults = function () {
+
+    var resultstring = "";
+    var tab = document.createElement('table');
+    var head = tab.createTHead();
+    var row = head.insertRow(-1);
+    var cell = row.insertCell(-1); cell.innerHTML = "Test Name and ID";
+    cell = row.insertCell(-1);     cell.innerHTML = "presented order";
+    cell = row.insertCell(-1);     cell.innerHTML = "time in ms";
+    cell = row.insertCell(-1);     cell.innerHTML = "chosen preference";
+
+    var numCorrect = 0;
+    var numWrong   = 0;
+
+    // evaluate single tests
+    for (var i = 0; i < this.TestConfig.Testsets.length; i++) {
+        this.TestState.EvalResults[i] = new Object();
+        this.TestState.EvalResults[i].TestID = this.TestConfig.Testsets[i].TestID;
+        if (this.TestState.TestSequence.indexOf(i)>=0) {
+            row  = tab.insertRow(-1);
+            cell = row.insertCell(-1);
+            cell.innerHTML = this.TestConfig.Testsets[i].Name + "("+this.TestConfig.Testsets[i].TestID+")";
+            cell = row.insertCell(-1);
+            this.TestState.EvalResults[i].PresentationOrder = "A=" + this.TestState.FileMappings[i].A + ", B=" + this.TestState.FileMappings[i].B;
+            cell.innerHTML = this.TestState.EvalResults[i].PresentationOrder;
+            cell = row.insertCell(-1);
+            this.TestState.EvalResults[i].Runtime   = this.TestState.Runtime[i];
+            cell.innerHTML = this.TestState.EvalResults[i].Runtime; 
+            cell = row.insertCell(-1);
+            this.TestState.EvalResults[i].Preference = this.TestState.Ratings[i];
+            cell.innerHTML = this.TestState.EvalResults[i].Preference;
+        }
+    }
+    resultstring += tab.outerHTML;
     return resultstring;
 }

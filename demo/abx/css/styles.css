@@ -3,7 +3,7 @@ body {
     padding:0;
     font-size: 12pt;
     font-weight: normal;
-    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
 }
 
 .ui-widget { 
@@ -20,7 +20,8 @@ body {
     margin-top:20px;
     margin-bottom:20px;
     padding:20px;
-    border: 1px solid black;
+    border: 1px solid #999999;
+    border-radius: 3px;
     width: 100%;
 }
 
@@ -38,6 +39,7 @@ body {
     text-align:center;
     font-size:2em;
     font-weight:bold;
+    color: #999999;
 }
 
 #LoadOverlay {
@@ -61,6 +63,7 @@ body {
     font-size:1.5em;
     margin-bottom:20px;	
     padding:5px;
+    border-radius: 3px;
     background-color:#dddddd;
 }
 
@@ -96,6 +99,19 @@ body {
     background-color:#E98484;
 }
 
+.submitOnline{
+    display:none;
+}
+
+.submitDownload{
+    display:none;
+}
+
+#ResultsBox {
+    display: none;
+    margin-top: 50px;
+}
+
 #ResultsBox table {
     text-align:left;
     margin-left:auto;
@@ -105,6 +121,20 @@ body {
 #ResultsBox table td {
     border: 1px solid black;
     padding: 5px;
+}
+
+#ResultsBox textarea {
+    width:80%;
+    min-height: 300px;
+}
+
+#SubmitBox {
+    display: none;
+}
+
+#SubmitBox #SubmitError {
+    color: red;
+    display: none;
 }
 
 #TestControls{
@@ -199,4 +229,13 @@ body {
 
 #AudioPool {
     display:none;
+}
+
+a {
+    color: #354556;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
